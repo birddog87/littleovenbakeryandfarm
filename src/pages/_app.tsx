@@ -1,13 +1,12 @@
-import { AppProps } from 'next/app';
-import '../styles/globals.css';
 import type { AppProps } from 'next/app';
+import '../styles/globals.css';
 import Head from 'next/head';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        {/* Your head content */}
+        <title>Little Oven Bakery and Farm</title>
       </Head>
       <Component {...pageProps} />
     </>
