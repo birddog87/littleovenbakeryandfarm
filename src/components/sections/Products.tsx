@@ -88,7 +88,7 @@ export default function Products({ openOrderForm }: ProductsProps) {
           {products.map((product, index) => (
             <div
               key={product.id}
-              ref={(el) => (productRefs.current[index] = el)}
+              ref={(el) => { productRefs.current[index] = el; }}
               className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 opacity-0"
               style={{ animationDelay: `${index * 150}ms` }}
             >
