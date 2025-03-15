@@ -1,12 +1,13 @@
 import { AppProps } from 'next/app';
 import '../styles/globals.css';
+import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        {/* Your head content */}
       </Head>
       <Component {...pageProps} />
     </>
