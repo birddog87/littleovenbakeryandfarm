@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#f7f3eb"/>
+  <circle cx="100" cy="100" r="60" fill="#d9ba82"/>
+  <circle cx="100" cy="100" r="50" fill="#e5c992"/>
+  <line x1="70" y1="100" x2="130" y2="100" stroke="#bf9f69" stroke-width="2"/>
+  <line x1="80" y1="80" x2="120" y2="80" stroke="#bf9f69" stroke-width="2"/>
+  <line x1="80" y1="120" x2="120" y2="120" stroke="#bf9f69" stroke-width="2"/>
+  <text x="100" y="170" text-anchor="middle" font-family="Arial" font-size="14" fill="#a88131">Crunchy Round Loaf</text>
+</svg>

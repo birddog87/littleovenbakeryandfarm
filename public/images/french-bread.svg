@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#f7f3eb"/>
+  <path d="M40,100 Q100,60 160,100 Q100,140 40,100 Z" fill="#e5c992"/>
+  <line x1="60" y1="100" x2="140" y2="100" stroke="#bf9f69" stroke-width="1"/>
+  <line x1="70" y1="90" x2="130" y2="90" stroke="#bf9f69" stroke-width="1"/>
+  <line x1="70" y1="110" x2="130" y2="110" stroke="#bf9f69" stroke-width="1"/>
+  <text x="100" y="170" text-anchor="middle" font-family="Arial" font-size="14" fill="#a88131">French Bread</text>
+</svg>
