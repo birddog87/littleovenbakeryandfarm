@@ -1,4 +1,11 @@
-// In orderUtils.ts
+// In orderUtils.ts at the top of the file
+export interface OrderItem {
+  id: number;
+  name: string;
+  quantity: number;
+  price: number;
+}
+
 export const initialItems: OrderItem[] = [
   { id: 1, name: 'Farm Fresh Eggs (Dozen)', quantity: 0, price: 7 },
   { id: 2, name: 'Crunchy Round Loaf', quantity: 0, price: 10 },
