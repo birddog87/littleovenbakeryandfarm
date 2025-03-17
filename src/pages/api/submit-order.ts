@@ -9,7 +9,6 @@ if (!process.env.SENDGRID_API_KEY) {
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Google Sheets setup
-const sheets = google.sheets('v4');
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 if (!SPREADSHEET_ID) {
   throw new Error('GOOGLE_SHEET_ID environment variable is not set');
@@ -20,7 +19,7 @@ const SHEET_NAME = 'Orders';
 if (!process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
   throw new Error('GOOGLE_SERVICE_ACCOUNT_KEY environment variable is not set');
 }
-const auth = new google.auth.GoogleAuth({
+const googleAuth = new google.auth.GoogleAuth({
   credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY),
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
@@ -103,8 +102,9 @@ export default async function handler(
 
     await sgMail.send(msg);
 
-    // Add to Google Sheet
-    const authClient = await auth.getClient();
+    // Create the Sheets client with the auth attached
+    const authClient = await googleAuth.getClient();
+    const sheets = google.sheets({ version: 'v4', auth: authClient });
 
     // Format date
     const orderDate = new Date().toLocaleString();
@@ -127,7 +127,6 @@ export default async function handler(
 
     // Append to sheet
     await sheets.spreadsheets.values.append({
-      auth: authClient,
       spreadsheetId: SPREADSHEET_ID,
       range: `${SHEET_NAME}!A:I`,
       valueInputOption: 'USER_ENTERED',
