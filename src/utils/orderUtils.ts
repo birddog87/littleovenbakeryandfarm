@@ -1,53 +1,77 @@
-// In orderUtils.ts at the top of the file
+// src/utils/orderUtils.ts
+
 export interface OrderItem {
   id: number;
   name: string;
-  quantity: number;
   price: number;
+  quantity: number;
+  description?: string;
+  discountThreshold?: number;  // e.g. 2 means "2 for some discount price"
+  discountPrice?: number;      // e.g. $8 for 2 loaves
 }
 
+// Example new prices + descriptions. Adjust as needed.
 export const initialItems: OrderItem[] = [
-  { id: 1, name: 'Farm Fresh Eggs (Dozen)', quantity: 0, price: 7 },
-  { id: 2, name: 'Crunchy Round Loaf', quantity: 0, price: 10 },
-  { id: 3, name: 'Sandwich Bread', quantity: 0, price: 5 },
-  { id: 4, name: 'French Bread', quantity: 0, price: 5 },
+  {
+    id: 1,
+    name: 'Farm Fresh Eggs',
+    price: 7,
+    quantity: 0,
+    description: 'Dozen free-range eggs. (Deal: 3 dozen for $18, or 30 eggs for $15 flat.)',
+    // optional discount logic if you want e.g. 3 for $18
+    // discountThreshold: 3,
+    // discountPrice: 18,
+  },
+  {
+    id: 2,
+    name: 'Crunchy Round Loaf',
+    price: 10,
+    quantity: 0,
+    description: 'Rustic artisanal loaf. Crisp crust, soft inside.',
+    discountThreshold: 2,     // e.g. "2 for $18"
+    discountPrice: 18,
+  },
+  {
+    id: 3,
+    name: 'Sandwich Bread',
+    price: 5,
+    quantity: 0,
+    description: 'Soft loaf perfect for sandwiches. 2 for $8 discount applies at quantity >= 2.',
+    discountThreshold: 2,
+    discountPrice: 8,
+  },
+  {
+    id: 4,
+    name: 'French Bread',
+    price: 5,
+    quantity: 0,
+    description: 'Classic baguette style. 2 for $8 discount applies at quantity >= 2.',
+    discountThreshold: 2,
+    discountPrice: 8,
+  },
 ];
 
+/**
+ * Calculates the subtotal, applying discounts when quantity >= discountThreshold.
+ * If discountThreshold is met, we'll apply discountPrice per threshold group,
+ * and regular price for any remainder. 
+ * E.g. if discountThreshold=2, discountPrice=8, and user orders 3, 
+ * that's "2 for $8" + 1 leftover at normal price 5 => total 13 for that item.
+ */
 export function calculateSubtotal(items: OrderItem[]): number {
-  let subtotal = 0;
-  
-  items.forEach(item => {
-    if (item.quantity === 0) return;
-    
-    if (item.id === 1) { // Eggs
-      // Only allow purchasing in full dozens
-      const dozensCount = item.quantity;
-      
-      if (dozensCount >= 3) {
-        // $18 for 3 dozen
-        const threeDozenSets = Math.floor(dozensCount / 3);
-        const remainingDozens = dozensCount % 3;
-        
-        subtotal += threeDozenSets * 18; // $18 per 3 dozen
-        subtotal += remainingDozens * 7; // $7 per remaining dozen
-      } else {
-        subtotal += dozensCount * 7; // $7 per dozen
-      }
-    } 
-    else if (item.id === 2 && item.quantity >= 2) { // Crunchy Round Loaf
-      const pairsCount = Math.floor(item.quantity / 2);
-      const singleCount = item.quantity % 2;
-      subtotal += (pairsCount * 18) + (singleCount * 10);
-    } 
-    else if ((item.id === 3 || item.id === 4) && item.quantity >= 2) { // Sandwich or French Bread
-      const pairsCount = Math.floor(item.quantity / 2);
-      const singleCount = item.quantity % 2;
-      subtotal += (pairsCount * 8) + (singleCount * 5);
-    } 
-    else {
-      subtotal += item.quantity * item.price;
+  return items.reduce((sum, item) => {
+    // If item qualifies for discount
+    if (item.discountThreshold && item.quantity >= item.discountThreshold && item.discountPrice) {
+      const groups = Math.floor(item.quantity / item.discountThreshold);
+      const remainder = item.quantity % item.discountThreshold;
+
+      const discountedTotal = groups * item.discountPrice;
+      const remainderTotal = remainder * item.price;
+
+      return sum + discountedTotal + remainderTotal;
     }
-  });
-  
-  return subtotal;
+
+    // No discount
+    return sum + item.price * item.quantity;
+  }, 0);
 }
