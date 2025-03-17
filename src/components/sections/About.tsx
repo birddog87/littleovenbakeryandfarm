@@ -86,9 +86,10 @@ export default function About() {
                   <div>
                     <p className="font-bold text-gray-800 mb-2">Hours:</p>
                     <p className="text-gray-700">
-                      Monday - Friday: 8AM - 5PM<br />
-                      Saturday: 9AM - 3PM<br />
-                      Sunday: Closed
+                      Order anytime online<br />
+                      Pickup available:<br />
+                      Saturday: 9AM - 5PM<br />
+                      Sunday: 9AM - 5PM
                     </p>
                   </div>
                 </div>

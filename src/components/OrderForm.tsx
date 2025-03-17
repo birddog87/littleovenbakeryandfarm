@@ -3,6 +3,17 @@ import { initialItems, OrderItem, calculateSubtotal } from '../utils/orderUtils'
 
 // Adjust the path above if your orderUtils is in a different location
 
+const validateEmail = (email: string): boolean => {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return email === '' || re.test(String(email).toLowerCase());
+};
+
+const validatePhone = (phone: string): boolean => {
+  // Basic North American phone validation - can be adjusted for international numbers
+  const re = /^(\+?1[-\s]?)?(\()?([0-9]{3})(\))?[-\s]?([0-9]{3})[-\s]?([0-9]{4})$/;
+  return phone === '' || re.test(phone);
+};
+
 interface OrderFormProps {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -76,28 +87,48 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
   };
 
   const validateStep = () => {
-    // Step 1 requires at least one item
-    if (currentStep === 1 && !hasItems) {
-      setErrorMessage('Please select at least one item to order');
+  // Step 1 requires at least one item
+  if (currentStep === 1 && !hasItems) {
+    setErrorMessage('Please select at least one item to order');
+    return false;
+  }
+  
+  // Step 2 requires name, plus either email or phone
+  if (currentStep === 2) {
+    if (!name.trim()) {
+      setErrorMessage('Please enter your name');
       return false;
     }
-    // Step 2 requires name, plus either email or phone
-    if (currentStep === 2) {
-      if (!name.trim()) {
-        setErrorMessage('Please enter your name');
-        return false;
-      }
-      if (!email.trim() && !phone.trim()) {
-        setErrorMessage('Please provide either an email or phone number');
-        return false;
-      }
-      if (deliveryOption === 'delivery' && !address.trim()) {
-        setErrorMessage('Please provide a delivery address');
-        return false;
-      }
+    
+    if (!email.trim() && !phone.trim()) {
+      setErrorMessage('Please provide either an email or phone number');
+      return false;
     }
-    return true;
-  };
+    
+    if (email.trim() && !validateEmail(email)) {
+      setErrorMessage('Please enter a valid email address');
+      return false;
+    }
+    
+    if (phone.trim() && !validatePhone(phone)) {
+      setErrorMessage('Please enter a valid phone number (e.g., 123-456-7890)');
+      return false;
+    }
+    
+    if (deliveryOption === 'delivery' && !address.trim()) {
+      setErrorMessage('Please provide a delivery address');
+      return false;
+    }
+    
+    if (comments.length > 500) {
+      setErrorMessage('Special instructions must be less than 500 characters');
+      return false;
+    }
+  }
+  
+  return true;
+};
+
 
   const handleNextStep = () => {
     if (validateStep()) {
