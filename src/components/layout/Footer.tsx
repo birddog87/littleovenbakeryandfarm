@@ -30,22 +30,22 @@ export default function Footer() {
             <p className="text-gray-400 mb-2">Wilsonville, Ontario N0E 1H0</p>
             <p className="text-gray-400 mb-2">Canada</p>
             <p className="text-gray-400 mb-2">Phone: (905) 745-5730</p>
-            <p className="text-gray-400">Email: info@thelittleoven.ca</p>
+            <p className="text-gray-400">Email: brookehammond717@gmail.com</p>
           </div>
           
           <div>
             <h3 className="text-xl font-bold mb-4 text-primary-100">Hours</h3>
             <div className="flex justify-between border-b border-gray-700 pb-2 mb-2">
               <span className="text-gray-400">Monday - Friday</span>
-              <span className="text-white">8AM - 5PM</span>
+              <span className="text-white">Closed</span>
             </div>
             <div className="flex justify-between border-b border-gray-700 pb-2 mb-2">
               <span className="text-gray-400">Saturday</span>
-              <span className="text-white">9AM - 3PM</span>
+              <span className="text-white">9AM - 5PM</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Sunday</span>
-              <span className="text-white">Closed</span>
+              <span className="text-white">9AM - 5PM</span>
             </div>
           </div>
         </div>

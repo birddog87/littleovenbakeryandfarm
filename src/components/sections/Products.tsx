@@ -5,13 +5,13 @@ interface ProductsProps {
 }
 
 const products = [
-  {
+   {
     id: 1,
     name: 'Farm Fresh Eggs',
     description: 'Locally raised, free-range eggs from happy hens. Each carton contains 12 eggs with vibrant orange yolks rich in nutrients.',
-    price: '$5.00 per carton',
-    deals: [],
-    image: '/images/eggs.svg'
+    price: '$7.00 per carton',
+    deals: ['3 dozen for $18.00', 'Flat (30 eggs) for $15.00'],
+    image: '/images/farm-fresh-eggs.jpg'
   },
   {
     id: 2,
@@ -19,7 +19,7 @@ const products = [
     description: 'Rustic artisanal bread with a crunchy crust and soft interior. Made with simple ingredients and slow-fermented for perfect flavor.',
     price: '$10.00 each',
     deals: ['2 for $18.00'],
-    image: '/images/round-loaf.svg'
+    image: '/images/crunchy-round-loaf.jpg'  // Updated to your round loaf image (Image 1 or 3)
   },
   {
     id: 3,
@@ -27,7 +27,7 @@ const products = [
     description: 'Soft, sliced bread perfect for sandwiches and toast. Made with unbleached flour and no preservatives or artificial ingredients.',
     price: '$5.00 each',
     deals: ['2 for $8.00'],
-    image: '/images/sandwich-bread.svg'
+    image: '/images/sandwich-bread.jpg'  // Updated to your sandwich bread image (Image 5)
   },
   {
     id: 4,
@@ -35,7 +35,7 @@ const products = [
     description: 'Traditional French baguette with a crispy exterior and light, airy interior. Perfect for dipping in olive oil or serving with cheese.',
     price: '$5.00 each',
     deals: ['2 for $8.00'],
-    image: '/images/french-bread.svg'
+    image: '/images/french-bread.jpg'  // Updated to your french bread image (Image 2)
   },
 ];
 
@@ -92,8 +92,12 @@ export default function Products({ openOrderForm }: ProductsProps) {
               className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 opacity-0"
               style={{ animationDelay: `${index * 150}ms` }}
             >
-              <div className="h-48 bg-primary-50 flex items-center justify-center">
-                <img src={product.image} alt={product.name} className="h-32 w-32" />
+              <div className="h-48 bg-primary-50 overflow-hidden">
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover" 
+                />
               </div>
               
               <div className="p-6">

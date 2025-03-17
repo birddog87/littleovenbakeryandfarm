@@ -80,7 +80,7 @@ export default function About() {
                     <p className="font-bold text-gray-800 mb-2">Contact:</p>
                     <p className="text-gray-700">
                       Phone: (905) 745-5730<br />
-                      Email: info@thelittleoven.ca
+                      Email: brookehammond717@gmail.com
                     </p>
                   </div>
                   <div>
