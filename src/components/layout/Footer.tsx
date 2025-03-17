@@ -1,4 +1,3 @@
-// src/components/layout/Footer.tsx 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   
@@ -50,7 +49,8 @@ export default function Footer() {
             </div>
           </div>
         </div>
-
+        
+        {/* Add Privacy Policy and Terms of Service links here */}
         <div className="mt-8 pt-4 border-t border-gray-800 text-center">
           <div className="flex justify-center space-x-6">
             <a href="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">
@@ -61,7 +61,8 @@ export default function Footer() {
             </a>
           </div>
         </div>
-        <div className="mt-12 pt-8 border-t border-gray-800 text-center">
+        
+        <div className="mt-6 text-center">
           <p className="text-gray-500">&copy; {currentYear} The Little Oven Bakery and Farm. All rights reserved.</p>
           <p className="text-gray-600 mt-2 text-sm">Handcrafted with love in Hagersville, Ontario</p>
         </div>
