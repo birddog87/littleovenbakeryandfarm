@@ -104,7 +104,7 @@ export default async function handler(
 
     // Create the Sheets client with the auth attached
     const authClient = await googleAuth.getClient();
-    const sheets = google.sheets({ version: 'v4', auth: authClient });
+    const sheets = google.sheets('v4');
 
     // Format date
     const orderDate = new Date().toLocaleString();
@@ -127,6 +127,7 @@ export default async function handler(
 
     // Append to sheet
     await sheets.spreadsheets.values.append({
+      auth: authClient,  // Add this line
       spreadsheetId: SPREADSHEET_ID,
       range: `${SHEET_NAME}!A:I`,
       valueInputOption: 'USER_ENTERED',
