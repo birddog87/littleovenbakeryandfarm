@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://littleovenfarm.com
+
+# Sitemaps
+Sitemap: https://littleovenfarm.com/sitemap.xml
