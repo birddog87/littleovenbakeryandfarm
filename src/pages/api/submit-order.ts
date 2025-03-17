@@ -25,6 +25,23 @@ const auth = new google.auth.GoogleAuth({
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
+// Define types for your items and request body
+interface OrderItem {
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+interface RequestBody {
+  name: string;
+  email: string;
+  phone: string;
+  items: OrderItem[];
+  comments?: string;
+  deliveryOption: 'pickup' | 'delivery';
+  address?: string;
+}
+
 type Data = {
   success: boolean;
   message: string;
@@ -37,19 +54,24 @@ export default async function handler(
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, message: 'Method not allowed' });
   }
+
   try {
-    const { name, email, phone, items, comments, deliveryOption, address } = req.body;
-    
+    // Cast req.body to our RequestBody interface
+    const { name, email, phone, items, comments, deliveryOption, address } = req.body as RequestBody;
+
     // Format order items for email
     const itemDetails = items
-      .filter(item => item.quantity > 0)
-      .map(item => `${item.quantity} x ${item.name} - $${(item.price * item.quantity).toFixed(2)}`)
+      .filter((item) => item.quantity > 0)
+      .map(
+        (item) =>
+          `${item.quantity} x ${item.name} - $${(item.price * item.quantity).toFixed(2)}`
+      )
       .join('<br>');
-    
+
     const subtotal = items
-      .filter(item => item.quantity > 0)
-      .reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    
+      .filter((item) => item.quantity > 0)
+      .reduce((sum, item) => sum + item.price * item.quantity, 0);
+
     // Send email
     const msg = {
       to: 'brookehammond717@gmail.com', // Your bakery email
@@ -58,25 +80,35 @@ export default async function handler(
       html: `
         <h2>New Order from The Little Oven Website</h2>
         <p><strong>Customer:</strong> ${name}</p>
-        <p><strong>Contact:</strong> ${email ? `Email: ${email}` : ''} ${phone ? `Phone: ${phone}` : ''}</p>
-        <p><strong>${deliveryOption === 'pickup' ? 'Pickup' : 'Delivery to'}:</strong> ${deliveryOption === 'delivery' ? address : 'Store pickup'}</p>
+        <p><strong>Contact:</strong> ${
+          email ? `Email: ${email}` : ''
+        } ${phone ? `Phone: ${phone}` : ''}</p>
+        <p><strong>${
+          deliveryOption === 'pickup' ? 'Pickup' : 'Delivery to'
+        }:</strong> ${
+        deliveryOption === 'delivery' ? address : 'Store pickup'
+      }</p>
         
         <h3>Order Items:</h3>
         ${itemDetails}
         <p><strong>Total:</strong> $${subtotal.toFixed(2)}</p>
         
-        ${comments ? `<h3>Special Instructions:</h3><p>${comments}</p>` : ''}
+        ${
+          comments
+            ? `<h3>Special Instructions:</h3><p>${comments}</p>`
+            : ''
+        }
       `,
     };
-    
+
     await sgMail.send(msg);
-    
+
     // Add to Google Sheet
     const authClient = await auth.getClient();
-    
+
     // Format date
     const orderDate = new Date().toLocaleString();
-    
+
     // Prepare row data
     const rowData = [
       orderDate,
@@ -85,11 +117,14 @@ export default async function handler(
       phone || 'Not provided',
       deliveryOption === 'pickup' ? 'Pickup' : 'Delivery',
       deliveryOption === 'delivery' ? address : 'N/A',
-      items.filter(item => item.quantity > 0).map(item => `${item.quantity}x ${item.name}`).join(', '),
+      items
+        .filter((item) => item.quantity > 0)
+        .map((item) => `${item.quantity}x ${item.name}`)
+        .join(', '),
       `$${subtotal.toFixed(2)}`,
-      comments || 'None'
+      comments || 'None',
     ];
-    
+
     // Append to sheet
     await sheets.spreadsheets.values.append({
       auth: authClient,
@@ -97,19 +132,19 @@ export default async function handler(
       range: `${SHEET_NAME}!A:I`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
-        values: [rowData]
-      }
+        values: [rowData],
+      },
     });
-    
-    return res.status(200).json({ 
-      success: true, 
-      message: 'Order received! We will contact you soon.' 
+
+    return res.status(200).json({
+      success: true,
+      message: 'Order received! We will contact you soon.',
     });
   } catch (error) {
     console.error('Error processing order:', error);
-    return res.status(500).json({ 
-      success: false, 
-      message: 'Error processing your order. Please try again.' 
+    return res.status(500).json({
+      success: false,
+      message: 'Error processing your order. Please try again.',
     });
   }
 }
