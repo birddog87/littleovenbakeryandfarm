@@ -55,7 +55,6 @@ export default async function handler(
   }
 
   try {
-    // Cast req.body to our RequestBody interface
     const { name, email, phone, items, comments, deliveryOption, address } = req.body as RequestBody;
 
     // Format order items for email
@@ -71,45 +70,102 @@ export default async function handler(
       .filter((item) => item.quantity > 0)
       .reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-    // Send email
+    // Beautiful HTML email template
     const msg = {
-      to: 'brookehammond717@gmail.com', // Your bakery email
-      from: 'sales@littleovenfarm.com', // Verified sender email
+      to: 'brookehammond717@gmail.com', // Bakery email
+      from: 'sales@littleovenfarm.com',  // Verified sender email
       subject: `New Order from ${name}`,
       html: `
-        <h2>New Order from The Little Oven Website</h2>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>New Order Notification</title>
+    <style>
+      body {
+        font-family: Helvetica, Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        background-color: #ffffff;
+        margin: auto;
+        padding: 20px;
+        max-width: 600px;
+        border-radius: 5px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        text-align: center;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e4e4e4;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 28px;
+        color: #333333;
+      }
+      .order-details {
+        margin-top: 20px;
+      }
+      .order-details h2 {
+        font-size: 20px;
+        color: #333333;
+      }
+      .order-details p {
+        font-size: 16px;
+        color: #555555;
+        line-height: 1.5;
+      }
+      .footer {
+        text-align: center;
+        font-size: 14px;
+        color: #999999;
+        margin-top: 30px;
+      }
+      .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: #ffffff !important;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>The Little Oven Bakery and Farm</h1>
+      </div>
+      <div class="order-details">
+        <h2>New Order Received</h2>
         <p><strong>Customer:</strong> ${name}</p>
-        <p><strong>Contact:</strong> ${
-          email ? `Email: ${email}` : ''
-        } ${phone ? `Phone: ${phone}` : ''}</p>
-        <p><strong>${
-          deliveryOption === 'pickup' ? 'Pickup' : 'Delivery to'
-        }:</strong> ${
-        deliveryOption === 'delivery' ? address : 'Store pickup'
-      }</p>
-        
-        <h3>Order Items:</h3>
-        ${itemDetails}
+        <p><strong>Contact:</strong> ${email ? email : ''} ${phone ? phone : ''}</p>
+        <p><strong>${deliveryOption === 'pickup' ? 'Pickup' : 'Delivery'}:</strong> ${deliveryOption === 'delivery' ? address : 'Store Pickup'}</p>
+        <p><strong>Order Items:</strong><br>${itemDetails}</p>
         <p><strong>Total:</strong> $${subtotal.toFixed(2)}</p>
-        
-        ${
-          comments
-            ? `<h3>Special Instructions:</h3><p>${comments}</p>`
-            : ''
-        }
-      `,
+        ${comments ? `<p><strong>Special Instructions:</strong> ${comments}</p>` : ''}
+      </div>
+      <div class="footer">
+        <p>Order placed on ${new Date().toLocaleString()}.</p>
+        <p>Thank you for choosing The Little Oven Bakery and Farm!</p>
+      </div>
+    </div>
+  </body>
+</html>
+`
     };
 
+    // Send email
     await sgMail.send(msg);
 
-    // Create an authClient and the Sheets instance
+    // Write order to Google Sheets
     const authClient = await googleAuth.getClient();
     const sheets = google.sheets('v4');
-
-    // Format date
     const orderDate = new Date().toLocaleString();
-
-    // Prepare row data
     const rowData = [
       orderDate,
       name,
@@ -122,29 +178,27 @@ export default async function handler(
         .map((item) => `${item.quantity}x ${item.name}`)
         .join(', '),
       `$${subtotal.toFixed(2)}`,
-      comments || 'None',
+      comments || 'None'
     ];
-
-    // Append to sheet (with a cast for the auth property)
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: `${SHEET_NAME}!A:I`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
-        values: [rowData],
+        values: [rowData]
       },
-      auth: authClient as any, // <-- Quick fix: cast to any
+      auth: authClient as any
     });
 
     return res.status(200).json({
       success: true,
-      message: 'Order received! We will contact you soon.',
+      message: 'Order received! We will contact you soon.'
     });
   } catch (error) {
     console.error('Error processing order:', error);
     return res.status(500).json({
       success: false,
-      message: 'Error processing your order. Please try again.',
+      message: 'Error processing your order. Please try again.'
     });
   }
 }
