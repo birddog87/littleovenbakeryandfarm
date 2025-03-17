@@ -102,7 +102,7 @@ export default async function handler(
 
     await sgMail.send(msg);
 
-    // Create the Sheets client with the auth attached
+    // Create an authClient and the Sheets instance
     const authClient = await googleAuth.getClient();
     const sheets = google.sheets('v4');
 
@@ -125,15 +125,15 @@ export default async function handler(
       comments || 'None',
     ];
 
-    // Append to sheet
+    // Append to sheet (with a cast for the auth property)
     await sheets.spreadsheets.values.append({
-      auth: authClient,  // Add this line
       spreadsheetId: SPREADSHEET_ID,
       range: `${SHEET_NAME}!A:I`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [rowData],
       },
+      auth: authClient as any, // <-- Quick fix: cast to any
     });
 
     return res.status(200).json({
