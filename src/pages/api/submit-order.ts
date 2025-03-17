@@ -104,7 +104,7 @@ export default async function handler(
     // Beautiful HTML email template
     const msg = {
       to: 'brookehammond717@gmail.com', // Bakery email
-      bcc: 'blender7@gmail.com'
+      bcc: 'blender7@gmail.com',
       from: 'sales@littleovenfarm.com',  // Verified sender email
       subject: `New Order from ${name}`,
       html: `
