@@ -282,16 +282,21 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                             ${item.price.toFixed(2)} each
                           </p>
                           {/* Optional discount messages */}
-                          {item.id === 2 && item.quantity >= 2 && (
-                            <p className="text-xs text-green-600">
-                              Discount: 2 for $18.00
-                            </p>
-                          )}
-                          {(item.id === 3 || item.id === 4) && item.quantity >= 2 && (
-                            <p className="text-xs text-green-600">
-                              Discount: 2 for $8.00
-                            </p>
-                          )}
+                            {item.id === 1 && (
+                              <p className="text-xs text-green-600">
+                                Discount: 3 dozen for $18.00
+                              </p>
+                            )}
+                            {item.id === 2 && item.quantity >= 2 && (
+                              <p className="text-xs text-green-600">
+                                Discount: 2 for $18.00
+                              </p>
+                            )}
+                            {(item.id === 3 || item.id === 4) && item.quantity >= 2 && (
+                              <p className="text-xs text-green-600">
+                                Discount: 2 for $8.00
+                              </p>
+                            )}
                         </div>
                         <div className="flex items-center">
                           <button
