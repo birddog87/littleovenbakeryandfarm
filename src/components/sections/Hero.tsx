@@ -1,3 +1,4 @@
+// src/components/sections/Hero.tsx
 import { useEffect, useRef } from 'react';
 
 interface HeroProps {
@@ -27,35 +28,44 @@ export default function Hero({ openOrderForm }: HeroProps) {
       {/* Background image with parallax effect - Reduced darkness */}
       <div className="absolute inset-0 bg-cover bg-center" style={{ 
         backgroundImage: 'url(/images/hero-bg.jpg)',
-        filter: 'brightness(0.85)' // Increased brightness from 0.7
+        filter: 'brightness(0.8)' // Slightly darkened background
       }}></div>
       
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+      
       {/* Hero content */}
-      <div ref={heroRef} className="relative z-10 text-center px-4 max-w-4xl mx-auto transition-all duration-300">
-        <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-white mb-6 font-serif drop-shadow-lg animate-fadeInDown">
-          <span className="block">Fresh, Artisanal</span>
-          <span className="block text-primary-100">Bread & Eggs</span>
-        </h1>
-        
-        <p className="text-xl md:text-2xl text-white mb-8 max-w-2xl mx-auto leading-relaxed animate-fadeInUp opacity-90">
-          Handcrafted bread and farm-fresh eggs from our family to yours. 
-          Made with love in Hagersville, Ontario.
-        </p>
-        
-        <div className="flex flex-col sm:flex-row justify-center gap-4 animate-fadeInUp animation-delay-300">
-          <button 
-            onClick={openOrderForm}
-            className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-          >
-            Order Now
-          </button>
+      <div 
+        ref={heroRef} 
+        className="relative z-10 text-center px-6 py-10 mx-auto transition-all duration-300 max-w-4xl"
+      >
+        {/* Semi-transparent container for text */}
+        <div className="bg-black bg-opacity-40 backdrop-blur-sm p-8 rounded-lg">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-white mb-6 font-serif drop-shadow-lg animate-fadeInDown">
+            <span className="block">Fresh, Artisanal</span>
+            <span className="block text-primary-100">Bread & Eggs</span>
+          </h1>
           
-          <a 
-            href="#products"
-            className="bg-white bg-opacity-30 hover:bg-opacity-40 backdrop-blur-sm text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-          >
-            See Products
-          </a>
+          <p className="text-xl md:text-2xl text-white mb-8 max-w-2xl mx-auto leading-relaxed animate-fadeInUp">
+            Handcrafted bread and farm-fresh eggs from our family to yours. 
+            Made with love in Hagersville, Ontario.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row justify-center gap-4 animate-fadeInUp animation-delay-300">
+            <button 
+              onClick={openOrderForm}
+              className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            >
+              Order Now
+            </button>
+            
+            <a 
+              href="#products"
+              className="bg-white bg-opacity-30 hover:bg-opacity-40 backdrop-blur-sm text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+            >
+              See Products
+            </a>
+          </div>
         </div>
         
         <div className="absolute bottom-10 left-0 right-0 animate-bounce">

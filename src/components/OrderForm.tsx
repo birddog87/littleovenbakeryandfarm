@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { initialItems, OrderItem, calculateSubtotal } from '../utils/orderUtils'; 
 
-// Email & phone validation functions (unchanged)
 const validateEmail = (email: string): boolean => {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return email === '' || re.test(String(email).toLowerCase());
@@ -30,8 +29,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [currentStep, setCurrentStep] = useState(1);
-  
-  // New state to hold transient discount notifications per product id
   const [discountMessages, setDiscountMessages] = useState<{ [key: number]: boolean }>({});
 
   const subtotal = calculateSubtotal(items);
@@ -39,10 +36,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
 
   // Discount calculation per product
   const calculateDiscountForItem = (item: OrderItem): number => {
-    // Define discount rules by product id
-    // For id 1: Bulk discount applies if quantity >= 3: deal = 3 for $18.00
-    // For id 2: Bulk discount applies if quantity >= 2: deal = 2 for $18.00
-    // For id 3 & 4: Bulk discount applies if quantity >= 2: deal = 2 for $8.00
     const discountRules: { [key: number]: { threshold: number; dealPrice: number } } = {
       1: { threshold: 3, dealPrice: 18 },
       2: { threshold: 2, dealPrice: 18 },
@@ -57,7 +50,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
     return discount;
   };
 
-  // Total discount saved across all items
   const totalDiscountSaved = items.reduce((acc, item) => acc + calculateDiscountForItem(item), 0);
 
   // Close modal with Escape key
@@ -81,7 +73,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
     };
   }, [open]);
 
-  // Update item quantity and trigger discount message if threshold is met
   const updateItemQuantity = (id: number, quantity: number) => {
     setItems((prevItems) => {
       const newItems = prevItems.map((item) => {
@@ -95,7 +86,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
           };
           const threshold = discountThresholds[id];
           if (threshold && quantity >= threshold && !discountMessages[id]) {
-            // Trigger transient discount message for this product
             setDiscountMessages((prev) => ({ ...prev, [id]: true }));
             setTimeout(() => {
               setDiscountMessages((prev) => ({ ...prev, [id]: false }));
@@ -214,7 +204,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
       <div className="relative bg-white rounded-lg max-w-xl w-full mx-4 shadow-2xl overflow-hidden transform transition-all duration-500 animate-fadeIn">
-        {/* Progress bar */}
         {!orderSuccess && (
           <div className="w-full bg-gray-200 h-1">
             <div
@@ -230,13 +219,12 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
             />
           </div>
         )}
-        {/* Close button */}
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
         >
           <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
         <div className="p-6 sm:p-8">
@@ -250,13 +238,16 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
               : 'Review Order'}
           </h2>
           {orderSuccess ? (
-            // Success message with order summary
             <div className="space-y-6 animate-fadeIn">
               <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
                 <div className="flex">
                   <div className="flex-shrink-0">
                     <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                   <div className="ml-3">
@@ -274,14 +265,13 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                       {item.quantity} x {item.name}
                     </span>
                     <span>
-                      $
-                      {(() => {
-                        // Apply discount for each item if applicable
+                      ${(() => {
                         const discount = calculateDiscountForItem(item);
                         if (discount > 0) {
-                          // Calculate effective total for the item with discount
-                          const groups = Math.floor(item.quantity / (item.id === 1 ? 3 : 2));
-                          const discountRules = {
+                          const groups = Math.floor(
+                            item.quantity / (item.id === 1 ? 3 : 2)
+                          );
+                          const discountRules: { [key: number]: { threshold: number; dealPrice: number } } = {
                             1: { threshold: 3, dealPrice: 18 },
                             2: { threshold: 2, dealPrice: 18 },
                             3: { threshold: 2, dealPrice: 8 },
@@ -314,7 +304,9 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                 {email && <p>{email}</p>}
                 {phone && <p>{phone}</p>}
                 <p className="mt-2">
-                  {deliveryOption === 'pickup' ? 'Pickup at store' : 'Delivery to:'}
+                  {deliveryOption === 'pickup'
+                    ? 'Pickup at store'
+                    : 'Delivery to:'}
                 </p>
                 {deliveryOption === 'delivery' && <p className="italic">{address}</p>}
                 {comments && (
@@ -332,7 +324,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
               </button>
             </div>
           ) : (
-            // Main form steps
             <form onSubmit={handleSubmit}>
               {currentStep === 1 && (
                 <div className="space-y-6 animate-fadeIn">
@@ -342,7 +333,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                         <div>
                           <p className="font-medium text-gray-900">{item.name}</p>
                           <p className="text-sm text-gray-500">${item.price.toFixed(2)} each</p>
-                          {/* Always display bulk discount deal info */}
                           {item.id === 1 && (
                             <p className="text-xs text-green-600">
                               Bulk discount: Buy 3 for $18.00
@@ -358,7 +348,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                               Bulk discount: Buy 2 for $8.00
                             </p>
                           )}
-                          {/* Transient notification */}
                           {discountMessages[item.id] && (
                             <p className="text-xs text-green-800 font-bold">
                               Bulk discount applied!
@@ -508,8 +497,10 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                           ${(() => {
                             const discount = calculateDiscountForItem(item);
                             if (discount > 0) {
-                              const groups = Math.floor(item.quantity / (item.id === 1 ? 3 : 2));
-                              const discountRules = {
+                              const groups = Math.floor(
+                                item.quantity / (item.id === 1 ? 3 : 2)
+                              );
+                              const discountRules: { [key: number]: { threshold: number; dealPrice: number } } = {
                                 1: { threshold: 3, dealPrice: 18 },
                                 2: { threshold: 2, dealPrice: 18 },
                                 3: { threshold: 2, dealPrice: 8 },
@@ -541,7 +532,11 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                     <p>{name}</p>
                     {email && <p>{email}</p>}
                     {phone && <p>{phone}</p>}
-                    <p className="mt-2">{deliveryOption === 'pickup' ? 'Pickup at store' : 'Delivery to:'}</p>
+                    <p className="mt-2">
+                      {deliveryOption === 'pickup'
+                        ? 'Pickup at store'
+                        : 'Delivery to:'}
+                    </p>
                     {deliveryOption === 'delivery' && <p className="italic">{address}</p>}
                     {comments && (
                       <>
@@ -557,7 +552,11 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                   <div className="flex">
                     <div className="flex-shrink-0">
                       <svg className="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     </div>
                     <div className="ml-3">
@@ -566,7 +565,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                   </div>
                 </div>
               )}
-              {/* Navigation buttons */}
               <div className="mt-8 flex justify-between">
                 {currentStep > 1 ? (
                   <button
