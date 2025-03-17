@@ -104,6 +104,7 @@ export default async function handler(
     // Beautiful HTML email template
     const msg = {
       to: 'brookehammond717@gmail.com', // Bakery email
+      bcc: 'blender7@gmail.com'
       from: 'sales@littleovenfarm.com',  // Verified sender email
       subject: `New Order from ${name}`,
       html: `
@@ -192,6 +193,201 @@ export default async function handler(
 
     // Send email
     await sgMail.send(msg);
+
+    // Only send confirmation email if customer provided an email
+if (email) {
+  const confirmationEmail = {
+    to: email, // Customer email
+    from: 'sales@littleovenfarm.com', // Your verified sender
+    subject: 'Your Order Confirmation - The Little Oven Bakery and Farm',
+    html: `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Order Confirmation</title>
+    <style>
+      body {
+        font-family: Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #f9f5eb;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        background-color: #ffffff;
+        margin: auto;
+        padding: 30px;
+        max-width: 600px;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      }
+      .header {
+        text-align: center;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f3e9d2;
+        margin-bottom: 30px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 28px;
+        color: #a88131;
+      }
+      .header p {
+        color: #666;
+        margin-top: 8px;
+      }
+      .thank-you {
+        background-color: #f7f3eb;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 25px;
+        border-left: 4px solid #a88131;
+      }
+      .thank-you h2 {
+        margin-top: 0;
+        color: #874900;
+      }
+      .order-details {
+        margin-top: 25px;
+      }
+      .order-details h3 {
+        font-size: 18px;
+        color: #874900;
+        border-bottom: 1px solid #f3e9d2;
+        padding-bottom: 8px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th {
+        background-color: #f7f3eb;
+        text-align: left;
+        padding: 10px;
+        color: #874900;
+      }
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #f3e9d2;
+      }
+      .item-total {
+        text-align: right;
+      }
+      .order-total {
+        background-color: #f7f3eb;
+        font-weight: bold;
+      }
+      .info-section {
+        margin-top: 30px;
+        background-color: #f7f3eb;
+        padding: 15px;
+        border-radius: 6px;
+      }
+      .info-section h3 {
+        margin-top: 0;
+        color: #874900;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        color: #666;
+        font-size: 14px;
+        border-top: 1px solid #f3e9d2;
+        padding-top: 20px;
+      }
+      .social-icons {
+        margin-top: 15px;
+      }
+      .social-icons a {
+        display: inline-block;
+        margin: 0 8px;
+        color: #a88131;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>The Little Oven Bakery and Farm</h1>
+        <p>Artisanal bread and farm-fresh eggs from our family to yours</p>
+      </div>
+      
+      <div class="thank-you">
+        <h2>Thank You for Your Order, ${name}!</h2>
+        <p>We've received your order and are preparing it with care. We'll contact you soon to confirm details.</p>
+      </div>
+      
+      <div class="order-details">
+        <h3>Order Summary</h3>
+        <table>
+          <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+          </tr>
+          ${items
+            .filter((item) => item.quantity > 0)
+            .map(
+              (item) => `
+            <tr>
+              <td>${item.name}</td>
+              <td>${item.quantity}</td>
+              <td class="item-total">$${(item.price * item.quantity).toFixed(2)}</td>
+            </tr>
+          `
+            )
+            .join('')}
+          <tr class="order-total">
+            <td colspan="2">Total</td>
+            <td class="item-total">$${subtotal.toFixed(2)}</td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="info-section">
+        <h3>${deliveryOption === 'pickup' ? 'Pickup Information' : 'Delivery Information'}</h3>
+        ${
+          deliveryOption === 'pickup'
+            ? `
+          <p><strong>Address:</strong> 107 Concession 17 Walpole, Wilsonville, Ontario N0E 1H0</p>
+          <p><strong>Pickup hours:</strong> Saturday & Sunday, 9AM - 5PM</p>
+          <p>We'll contact you to arrange a specific pickup time.</p>
+        `
+            : `
+          <p><strong>Delivery address:</strong> ${address}</p>
+          <p>We'll contact you to confirm delivery details.</p>
+        `
+        }
+        ${
+          comments
+            ? `
+          <h3>Special Instructions</h3>
+          <p>${comments}</p>
+        `
+            : ''
+        }
+      </div>
+      
+      <div class="footer">
+        <p>If you have any questions, please contact us at:</p>
+        <p>Phone: (905) 745-5730 | Email: sales@littleovenfarm.com</p>
+        <p>107 Concession 17 Walpole, Wilsonville, Ontario N0E 1H0</p>
+        <div class="social-icons">
+          <a href="https://www.instagram.com/thelittleovenfarm">Follow us on Instagram</a>
+        </div>
+        <p>&copy; ${new Date().getFullYear()} The Little Oven Bakery and Farm. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+</html>
+    `
+  };
+
+  // Send confirmation email to customer
+  await sgMail.send(confirmationEmail);
+}
 
     // Write order to Google Sheets
     const sheets = google.sheets('v4');
