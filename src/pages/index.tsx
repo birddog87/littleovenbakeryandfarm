@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import Header from '../components/layout/Header';
 import Hero from '../components/sections/Hero';
 import Products from '../components/sections/Products';
@@ -10,15 +11,24 @@ import OrderForm from '../components/OrderForm';
 export default function Home() {
   const [orderFormOpen, setOrderFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+  const router = useRouter();
+
   useEffect(() => {
     // Simulating page loading
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1000);
-    
     return () => clearTimeout(timer);
   }, []);
+
+  // Check for the query parameter and trigger the order form modal
+  useEffect(() => {
+    if (router.query.order === 'true') {
+      setOrderFormOpen(true);
+      // Remove the query parameter after opening the modal
+      router.replace('/', undefined, { shallow: true });
+    }
+  }, [router.query]);
 
   // Handle schema.org structured data for SEO
   const structuredData = {
@@ -59,33 +69,48 @@ export default function Home() {
     <>
       <Head>
         <title>The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs | Hagersville, Ontario</title>
-        <meta name="description" content="The Little Oven Bakery and Farm offers artisanal bread and farm fresh eggs in Hagersville, Ontario. Order our crusty round loaves, sandwich bread, french bread, and farm-fresh eggs for pickup or local delivery." />
-        <meta name="keywords" content="artisanal bakery, homemade bread, farm fresh eggs, Hagersville, Ontario, Little Oven Bakery and Farm, local bakery, crusty bread, sandwich bread, french bread" />
-        
+        <meta
+          name="description"
+          content="The Little Oven Bakery and Farm offers artisanal bread and farm fresh eggs in Hagersville, Ontario. Order our crusty round loaves, sandwich bread, french bread, and farm-fresh eggs for pickup or local delivery."
+        />
+        <meta
+          name="keywords"
+          content="artisanal bakery, homemade bread, farm fresh eggs, Hagersville, Ontario, Little Oven Bakery and Farm, local bakery, crusty bread, sandwich bread, french bread"
+        />
+
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://thelittleoven.ca/" />
         <meta property="og:title" content="The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs" />
-        <meta property="og:description" content="Handcrafted bread and farm-fresh eggs from our family to yours. Made with love in Hagersville, Ontario." />
+        <meta
+          property="og:description"
+          content="Handcrafted bread and farm-fresh eggs from our family to yours. Made with love in Hagersville, Ontario."
+        />
         <meta property="og:image" content="https://thelittleoven.ca/images/og-image.jpg" />
 
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://thelittleoven.ca/" />
         <meta property="twitter:title" content="The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs" />
-        <meta property="twitter:description" content="Handcrafted bread and farm-fresh eggs from our family to yours. Made with love in Hagersville, Ontario." />
+        <meta
+          property="twitter:description"
+          content="Handcrafted bread and farm-fresh eggs from our family to yours. Made with love in Hagersville, Ontario."
+        />
         <meta property="twitter:image" content="https://thelittleoven.ca/images/twitter-card.jpg" />
-        
+
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        
+
         {/* Fonts */}
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet" />
-        
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
+
         {/* Structured data for SEO */}
         <script
           type="application/ld+json"

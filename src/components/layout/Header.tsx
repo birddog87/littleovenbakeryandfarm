@@ -1,4 +1,6 @@
+// src/components/layout/Header.tsx
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 interface HeaderProps {
   openOrderForm: () => void;
@@ -7,6 +9,12 @@ interface HeaderProps {
 export default function Header({ openOrderForm }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const router = useRouter();
+  
+  // Check if we're on a legal page
+  const isLegalPage =
+    router.pathname === '/privacy-policy' ||
+    router.pathname === '/terms-of-service';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,10 +24,38 @@ export default function Header({ openOrderForm }: HeaderProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Handle nav link clicks for Home, Products, About
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    target: string
+  ) => {
+    if (router.pathname !== '/') {
+      e.preventDefault();
+      if (target === 'home') {
+        router.push('/');
+      } else {
+        router.push(`/#${target}`);
+      }
+    }
+  };
+
+  // Updated Order Now click handler using a query parameter
+  const handleOrderNowClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (router.pathname !== '/') {
+      e.preventDefault();
+      router.push({
+        pathname: '/',
+        query: { order: 'true' }
+      });
+    } else {
+      openOrderForm();
+    }
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
+        scrolled || isLegalPage ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -34,7 +70,7 @@ export default function Header({ openOrderForm }: HeaderProps) {
             </div>
             <h1
               className={`font-serif font-bold text-xl md:text-2xl transition-colors duration-300 ${
-                scrolled ? 'text-primary-700' : 'text-white text-shadow'
+                scrolled || isLegalPage ? 'text-primary-700' : 'text-white text-shadow'
               }`}
             >
               The Little Oven Bakery and Farm
@@ -44,18 +80,19 @@ export default function Header({ openOrderForm }: HeaderProps) {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center space-x-6">
             {['Home', 'Products', 'About'].map((item) => (
-                <a
-                  key={item}
-                  href={item === 'Home' ? '#' : `#${item.toLowerCase()}`}
-                  className={`font-medium transition-colors duration-300 hover:text-primary-600 ${
-                    scrolled ? 'text-gray-700' : 'text-white text-shadow-sm'
-                  }`}
-                >
-                  {item}
-                </a>
-              ))}
+              <a
+                key={item}
+                href={item === 'Home' ? '/' : `/#${item.toLowerCase()}`}
+                className={`font-medium transition-colors duration-300 hover:text-primary-600 ${
+                  scrolled || isLegalPage ? 'text-gray-700' : 'text-white text-shadow-sm'
+                }`}
+                onClick={(e) => handleNavClick(e, item.toLowerCase())}
+              >
+                {item}
+              </a>
+            ))}
             <button
-              onClick={openOrderForm}
+              onClick={handleOrderNowClick}
               className="transform hover:scale-105 transition-all duration-300 bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-full shadow-md hover:shadow-lg"
             >
               Order Now
@@ -64,7 +101,7 @@ export default function Header({ openOrderForm }: HeaderProps) {
 
           {/* Mobile menu button */}
           <button
-            className={`md:hidden ${scrolled ? 'text-primary-700' : 'text-white'}`}
+            className={`md:hidden ${scrolled || isLegalPage ? 'text-primary-700' : 'text-white'}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <svg
@@ -100,18 +137,20 @@ export default function Header({ openOrderForm }: HeaderProps) {
               {['Home', 'Products', 'About'].map((item) => (
                 <a
                   key={item}
-                  href={item === 'Home' ? '#' : `#${item.toLowerCase()}`}
+                  href={item === 'Home' ? '/' : `/#${item.toLowerCase()}`}
                   className="text-gray-700 hover:text-primary-600 font-medium py-2"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    setMobileMenuOpen(false);
+                    handleNavClick(e, item.toLowerCase());
+                  }}
                 >
                   {item}
                 </a>
               ))}
-
               <button
-                onClick={() => {
-                  openOrderForm();
+                onClick={(e) => {
                   setMobileMenuOpen(false);
+                  handleOrderNowClick(e);
                 }}
                 className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-md w-full mt-2"
               >

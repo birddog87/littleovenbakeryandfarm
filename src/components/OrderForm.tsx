@@ -1,15 +1,14 @@
+// src/components/OrderForm.tsx
 import { useState, useEffect } from 'react';
 import { initialItems, OrderItem, calculateSubtotal } from '../utils/orderUtils'; 
 
-// Adjust the path above if your orderUtils is in a different location
-
+// Email & phone validation functions (unchanged)
 const validateEmail = (email: string): boolean => {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return email === '' || re.test(String(email).toLowerCase());
 };
 
 const validatePhone = (phone: string): boolean => {
-  // Basic North American phone validation - can be adjusted for international numbers
   const re = /^(\+?1[-\s]?)?(\()?([0-9]{3})(\))?[-\s]?([0-9]{3})[-\s]?([0-9]{4})$/;
   return phone === '' || re.test(phone);
 };
@@ -31,9 +30,35 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [currentStep, setCurrentStep] = useState(1);
+  
+  // New state to hold transient discount notifications per product id
+  const [discountMessages, setDiscountMessages] = useState<{ [key: number]: boolean }>({});
 
   const subtotal = calculateSubtotal(items);
   const hasItems = items.some((item) => item.quantity > 0);
+
+  // Discount calculation per product
+  const calculateDiscountForItem = (item: OrderItem): number => {
+    // Define discount rules by product id
+    // For id 1: Bulk discount applies if quantity >= 3: deal = 3 for $18.00
+    // For id 2: Bulk discount applies if quantity >= 2: deal = 2 for $18.00
+    // For id 3 & 4: Bulk discount applies if quantity >= 2: deal = 2 for $8.00
+    const discountRules: { [key: number]: { threshold: number; dealPrice: number } } = {
+      1: { threshold: 3, dealPrice: 18 },
+      2: { threshold: 2, dealPrice: 18 },
+      3: { threshold: 2, dealPrice: 8 },
+      4: { threshold: 2, dealPrice: 8 },
+    };
+    const rule = discountRules[item.id];
+    if (!rule || item.quantity < rule.threshold) return 0;
+    const groups = Math.floor(item.quantity / rule.threshold);
+    const normalPriceForGroup = item.price * rule.threshold;
+    const discount = groups * (normalPriceForGroup - rule.dealPrice);
+    return discount;
+  };
+
+  // Total discount saved across all items
+  const totalDiscountSaved = items.reduce((acc, item) => acc + calculateDiscountForItem(item), 0);
 
   // Close modal with Escape key
   useEffect(() => {
@@ -41,9 +66,7 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
       if (event.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', handleEsc);
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
+    return () => window.removeEventListener('keydown', handleEsc);
   }, [setOpen]);
 
   // Prevent body scrolling when modal is open
@@ -58,10 +81,32 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
     };
   }, [open]);
 
+  // Update item quantity and trigger discount message if threshold is met
   const updateItemQuantity = (id: number, quantity: number) => {
-    setItems(
-      items.map((item) => (item.id === id ? { ...item, quantity } : item))
-    );
+    setItems((prevItems) => {
+      const newItems = prevItems.map((item) => {
+        if (item.id === id) {
+          const updatedItem = { ...item, quantity };
+          const discountThresholds: { [key: number]: number } = {
+            1: 3,
+            2: 2,
+            3: 2,
+            4: 2,
+          };
+          const threshold = discountThresholds[id];
+          if (threshold && quantity >= threshold && !discountMessages[id]) {
+            // Trigger transient discount message for this product
+            setDiscountMessages((prev) => ({ ...prev, [id]: true }));
+            setTimeout(() => {
+              setDiscountMessages((prev) => ({ ...prev, [id]: false }));
+            }, 3000);
+          }
+          return updatedItem;
+        }
+        return item;
+      });
+      return newItems;
+    });
   };
 
   const resetForm = () => {
@@ -80,55 +125,44 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
 
   const handleClose = () => {
     setOpen(false);
-    // If the order was successful, reset the form after closing
     if (orderSuccess) {
       setTimeout(resetForm, 300);
     }
   };
 
   const validateStep = () => {
-  // Step 1 requires at least one item
-  if (currentStep === 1 && !hasItems) {
-    setErrorMessage('Please select at least one item to order');
-    return false;
-  }
-  
-  // Step 2 requires name, plus either email or phone
-  if (currentStep === 2) {
-    if (!name.trim()) {
-      setErrorMessage('Please enter your name');
+    if (currentStep === 1 && !hasItems) {
+      setErrorMessage('Please select at least one item to order');
       return false;
     }
-    
-    if (!email.trim() && !phone.trim()) {
-      setErrorMessage('Please provide either an email or phone number');
-      return false;
+    if (currentStep === 2) {
+      if (!name.trim()) {
+        setErrorMessage('Please enter your name');
+        return false;
+      }
+      if (!email.trim() && !phone.trim()) {
+        setErrorMessage('Please provide either an email or phone number');
+        return false;
+      }
+      if (email.trim() && !validateEmail(email)) {
+        setErrorMessage('Please enter a valid email address');
+        return false;
+      }
+      if (phone.trim() && !validatePhone(phone)) {
+        setErrorMessage('Please enter a valid phone number (e.g., 123-456-7890)');
+        return false;
+      }
+      if (deliveryOption === 'delivery' && !address.trim()) {
+        setErrorMessage('Please provide a delivery address');
+        return false;
+      }
+      if (comments.length > 500) {
+        setErrorMessage('Special instructions must be less than 500 characters');
+        return false;
+      }
     }
-    
-    if (email.trim() && !validateEmail(email)) {
-      setErrorMessage('Please enter a valid email address');
-      return false;
-    }
-    
-    if (phone.trim() && !validatePhone(phone)) {
-      setErrorMessage('Please enter a valid phone number (e.g., 123-456-7890)');
-      return false;
-    }
-    
-    if (deliveryOption === 'delivery' && !address.trim()) {
-      setErrorMessage('Please provide a delivery address');
-      return false;
-    }
-    
-    if (comments.length > 500) {
-      setErrorMessage('Special instructions must be less than 500 characters');
-      return false;
-    }
-  }
-  
-  return true;
-};
-
+    return true;
+  };
 
   const handleNextStep = () => {
     if (validateStep()) {
@@ -143,53 +177,40 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setErrorMessage('');
-
-  if (!validateStep()) {
-    return;
-  }
-
-  setIsSubmitting(true);
-
-  try {
-    // Make a POST request to your API endpoint
-    const response = await fetch('/api/submit-order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name,
-        email,
-        phone,
-        items,
-        comments,
-        deliveryOption,
-        address,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Request failed with status ${response.status}`);
+    e.preventDefault();
+    setErrorMessage('');
+    if (!validateStep()) return;
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/submit-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          items,
+          comments,
+          deliveryOption,
+          address,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Order response:', data);
+      setOrderSuccess(true);
+      setIsSubmitting(false);
+    } catch (error) {
+      setErrorMessage('Network error. Please try again later.');
+      console.error('Error submitting order:', error);
+      setIsSubmitting(false);
     }
+  };
 
-    const data = await response.json();
-    console.log('Order response:', data);
-
-    // If successful, show success state
-    setOrderSuccess(true);
-    setIsSubmitting(false);
-  } catch (error) {
-    setErrorMessage('Network error. Please try again later.');
-    console.error('Error submitting order:', error);
-    setIsSubmitting(false);
-  }
-};
-
-
-  // If the form is closed, render nothing
   if (!open) return null;
 
-  // Otherwise, render the form modal
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
       <div className="relative bg-white rounded-lg max-w-xl w-full mx-4 shadow-2xl overflow-hidden transform transition-all duration-500 animate-fadeIn">
@@ -209,27 +230,15 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
             />
           </div>
         )}
-
         {/* Close button */}
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
         >
-          <svg
-            className="h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
+          <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
-
         <div className="p-6 sm:p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 font-serif">
             {orderSuccess
@@ -240,67 +249,74 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
               ? 'Your Details'
               : 'Review Order'}
           </h2>
-
           {orderSuccess ? (
-            // Success message
+            // Success message with order summary
             <div className="space-y-6 animate-fadeIn">
               <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
                 <div className="flex">
                   <div className="flex-shrink-0">
-                    <svg
-                      className="h-5 w-5 text-green-500"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
+                    <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                     </svg>
                   </div>
                   <div className="ml-3">
                     <p className="text-sm font-medium text-green-800">
-                      Thank you for your order! We’ll contact you soon to confirm
-                      the details.
+                      Thank you for your order! We’ll contact you soon to confirm the details.
                     </p>
                   </div>
                 </div>
               </div>
-
               <div className="border-t border-b py-4">
                 <h3 className="font-medium text-gray-900 mb-2">Order Summary</h3>
-                {items
-                  .filter((item) => item.quantity > 0)
-                  .map((item) => (
-                    <div key={item.id} className="flex justify-between py-2">
-                      <span>
-                        {item.quantity} x {item.name}
-                      </span>
-                      <span>${(item.price * item.quantity).toFixed(2)}</span>
-                    </div>
-                  ))}
+                {items.filter((item) => item.quantity > 0).map((item) => (
+                  <div key={item.id} className="flex justify-between py-2">
+                    <span>
+                      {item.quantity} x {item.name}
+                    </span>
+                    <span>
+                      $
+                      {(() => {
+                        // Apply discount for each item if applicable
+                        const discount = calculateDiscountForItem(item);
+                        if (discount > 0) {
+                          // Calculate effective total for the item with discount
+                          const groups = Math.floor(item.quantity / (item.id === 1 ? 3 : 2));
+                          const discountRules = {
+                            1: { threshold: 3, dealPrice: 18 },
+                            2: { threshold: 2, dealPrice: 18 },
+                            3: { threshold: 2, dealPrice: 8 },
+                            4: { threshold: 2, dealPrice: 8 },
+                          };
+                          const rule = discountRules[item.id];
+                          const remainder = item.quantity % rule.threshold;
+                          const totalWithDiscount = groups * rule.dealPrice + remainder * item.price;
+                          return totalWithDiscount.toFixed(2);
+                        }
+                        return (item.quantity * item.price).toFixed(2);
+                      })()}
+                    </span>
+                  </div>
+                ))}
                 <div className="flex justify-between font-bold mt-2 pt-2 border-t">
                   <span>Total</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
+                {totalDiscountSaved > 0 && (
+                  <div className="flex justify-between text-sm text-green-600 mt-2">
+                    <span>You saved:</span>
+                    <span>${totalDiscountSaved.toFixed(2)}</span>
+                  </div>
+                )}
               </div>
-
               <div>
-                <h3 className="font-medium text-gray-900 mb-2">
-                  Contact Information
-                </h3>
+                <h3 className="font-medium text-gray-900 mb-2">Contact Information</h3>
                 <p>{name}</p>
                 {email && <p>{email}</p>}
                 {phone && <p>{phone}</p>}
                 <p className="mt-2">
-                  {deliveryOption === 'pickup'
-                    ? 'Pickup at store'
-                    : 'Delivery to:'}
+                  {deliveryOption === 'pickup' ? 'Pickup at store' : 'Delivery to:'}
                 </p>
-                {deliveryOption === 'delivery' && (
-                  <p className="italic">{address}</p>
-                )}
+                {deliveryOption === 'delivery' && <p className="italic">{address}</p>}
                 {comments && (
                   <>
                     <p className="mt-2 font-medium">Special Instructions:</p>
@@ -308,7 +324,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                   </>
                 )}
               </div>
-
               <button
                 onClick={handleClose}
                 className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-4 rounded-md transition-colors"
@@ -323,100 +338,69 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                 <div className="space-y-6 animate-fadeIn">
                   <div className="border-t border-b border-gray-200 divide-y divide-gray-200">
                     {items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="py-4 flex justify-between items-center"
-                      >
+                      <div key={item.id} className="py-4 flex justify-between items-center">
                         <div>
                           <p className="font-medium text-gray-900">{item.name}</p>
-                          <p className="text-sm text-gray-500">
-                            ${item.price.toFixed(2)} each
-                          </p>
-                          {/* Optional discount messages */}
-                            {item.id === 1 && (
-                              <p className="text-xs text-green-600">
-                                Discount: 3 dozen for $18.00
-                              </p>
-                            )}
-                            {item.id === 2 && item.quantity >= 2 && (
-                              <p className="text-xs text-green-600">
-                                Discount: 2 for $18.00
-                              </p>
-                            )}
-                            {(item.id === 3 || item.id === 4) && item.quantity >= 2 && (
-                              <p className="text-xs text-green-600">
-                                Discount: 2 for $8.00
-                              </p>
-                            )}
+                          <p className="text-sm text-gray-500">${item.price.toFixed(2)} each</p>
+                          {/* Always display bulk discount deal info */}
+                          {item.id === 1 && (
+                            <p className="text-xs text-green-600">
+                              Bulk discount: Buy 3 for $18.00
+                            </p>
+                          )}
+                          {item.id === 2 && (
+                            <p className="text-xs text-green-600">
+                              Bulk discount: Buy 2 for $18.00
+                            </p>
+                          )}
+                          {(item.id === 3 || item.id === 4) && (
+                            <p className="text-xs text-green-600">
+                              Bulk discount: Buy 2 for $8.00
+                            </p>
+                          )}
+                          {/* Transient notification */}
+                          {discountMessages[item.id] && (
+                            <p className="text-xs text-green-800 font-bold">
+                              Bulk discount applied!
+                            </p>
+                          )}
                         </div>
                         <div className="flex items-center">
                           <button
                             type="button"
                             className="p-1 rounded-full text-gray-400 hover:text-gray-600"
                             onClick={() =>
-                              updateItemQuantity(
-                                item.id,
-                                Math.max(0, item.quantity - 1)
-                              )
+                              updateItemQuantity(item.id, Math.max(0, item.quantity - 1))
                             }
                           >
-                            <svg
-                              className="h-6 w-6"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M20 12H4"
-                              />
+                            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                             </svg>
                           </button>
-                          <span className="mx-3 w-6 text-center font-medium">
-                            {item.quantity}
-                          </span>
+                          <span className="mx-3 w-6 text-center font-medium">{item.quantity}</span>
                           <button
                             type="button"
                             className="p-1 rounded-full text-gray-400 hover:text-gray-600"
-                            onClick={() =>
-                              updateItemQuantity(item.id, item.quantity + 1)
-                            }
+                            onClick={() => updateItemQuantity(item.id, item.quantity + 1)}
                           >
-                            <svg
-                              className="h-6 w-6"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                              />
+                            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
                           </button>
                         </div>
                       </div>
                     ))}
                   </div>
-
                   <div className="flex justify-between text-lg font-medium">
                     <span>Subtotal</span>
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
                 </div>
               )}
-
               {currentStep === 2 && (
                 <div className="space-y-6 animate-fadeIn">
                   <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                       Name *
                     </label>
                     <input
@@ -428,13 +412,9 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                       placeholder="Your full name"
                     />
                   </div>
-
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label
-                        htmlFor="email"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                         Email
                       </label>
                       <input
@@ -447,10 +427,7 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                       />
                     </div>
                     <div>
-                      <label
-                        htmlFor="phone"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
                         Phone
                       </label>
                       <input
@@ -463,11 +440,8 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                       />
                     </div>
                   </div>
-
                   <div>
-                    <span className="block text-sm font-medium text-gray-700 mb-2">
-                      Delivery Options
-                    </span>
+                    <span className="block text-sm font-medium text-gray-700 mb-2">Delivery Options</span>
                     <div className="space-y-2">
                       <label className="flex items-center">
                         <input
@@ -477,9 +451,7 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                           onChange={() => setDeliveryOption('pickup')}
                           className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
                         />
-                        <span className="ml-2 text-gray-700">
-                          Pickup at bakery (107 Concession 17 Walpole)
-                        </span>
+                        <span className="ml-2 text-gray-700">Pickup at bakery (107 Concession 17 Walpole)</span>
                       </label>
                       <label className="flex items-center">
                         <input
@@ -489,19 +461,13 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                           onChange={() => setDeliveryOption('delivery')}
                           className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
                         />
-                        <span className="ml-2 text-gray-700">
-                          Local Delivery (within 20km of Hagersville)
-                        </span>
+                        <span className="ml-2 text-gray-700">Local Delivery (within 20km of Hagersville)</span>
                       </label>
                     </div>
                   </div>
-
                   {deliveryOption === 'delivery' && (
                     <div>
-                      <label
-                        htmlFor="address"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
+                      <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                         Delivery Address *
                       </label>
                       <textarea
@@ -514,12 +480,8 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                       />
                     </div>
                   )}
-
                   <div>
-                    <label
-                      htmlFor="comments"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
+                    <label htmlFor="comments" className="block text-sm font-medium text-gray-700 mb-1">
                       Special Instructions (optional)
                     </label>
                     <textarea
@@ -533,44 +495,54 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                   </div>
                 </div>
               )}
-
               {currentStep === 3 && (
                 <div className="space-y-6 animate-fadeIn">
                   <div className="border-t border-b py-4">
-                    <h3 className="font-medium text-gray-900 mb-2">
-                      Order Summary
-                    </h3>
-                    {items
-                      .filter((item) => item.quantity > 0)
-                      .map((item) => (
-                        <div key={item.id} className="flex justify-between py-2">
-                          <span>
-                            {item.quantity} x {item.name}
-                          </span>
-                          <span>${(item.quantity * item.price).toFixed(2)}</span>
-                        </div>
-                      ))}
+                    <h3 className="font-medium text-gray-900 mb-2">Order Summary</h3>
+                    {items.filter((item) => item.quantity > 0).map((item) => (
+                      <div key={item.id} className="flex justify-between py-2">
+                        <span>
+                          {item.quantity} x {item.name}
+                        </span>
+                        <span>
+                          ${(() => {
+                            const discount = calculateDiscountForItem(item);
+                            if (discount > 0) {
+                              const groups = Math.floor(item.quantity / (item.id === 1 ? 3 : 2));
+                              const discountRules = {
+                                1: { threshold: 3, dealPrice: 18 },
+                                2: { threshold: 2, dealPrice: 18 },
+                                3: { threshold: 2, dealPrice: 8 },
+                                4: { threshold: 2, dealPrice: 8 },
+                              };
+                              const rule = discountRules[item.id];
+                              const remainder = item.quantity % rule.threshold;
+                              const totalWithDiscount = groups * rule.dealPrice + remainder * item.price;
+                              return totalWithDiscount.toFixed(2);
+                            }
+                            return (item.quantity * item.price).toFixed(2);
+                          })()}
+                        </span>
+                      </div>
+                    ))}
                     <div className="flex justify-between font-bold mt-2 pt-2 border-t">
                       <span>Total</span>
                       <span>${subtotal.toFixed(2)}</span>
                     </div>
+                    {totalDiscountSaved > 0 && (
+                      <div className="flex justify-between text-sm text-green-600 mt-2">
+                        <span>You saved:</span>
+                        <span>${totalDiscountSaved.toFixed(2)}</span>
+                      </div>
+                    )}
                   </div>
-
                   <div>
-                    <h3 className="font-medium text-gray-900 mb-2">
-                      Contact Information
-                    </h3>
+                    <h3 className="font-medium text-gray-900 mb-2">Contact Information</h3>
                     <p>{name}</p>
                     {email && <p>{email}</p>}
                     {phone && <p>{phone}</p>}
-                    <p className="mt-2">
-                      {deliveryOption === 'pickup'
-                        ? 'Pickup at store'
-                        : 'Delivery to:'}
-                    </p>
-                    {deliveryOption === 'delivery' && (
-                      <p className="italic">{address}</p>
-                    )}
+                    <p className="mt-2">{deliveryOption === 'pickup' ? 'Pickup at store' : 'Delivery to:'}</p>
+                    {deliveryOption === 'delivery' && <p className="italic">{address}</p>}
                     {comments && (
                       <>
                         <p className="mt-2 font-medium">Special Instructions:</p>
@@ -580,32 +552,20 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                   </div>
                 </div>
               )}
-
               {errorMessage && (
                 <div className="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
                   <div className="flex">
                     <div className="flex-shrink-0">
-                      <svg
-                        className="h-5 w-5 text-red-500"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                          clipRule="evenodd"
-                        />
+                      <svg className="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
                       </svg>
                     </div>
                     <div className="ml-3">
-                      <p className="text-sm font-medium text-red-800">
-                        {errorMessage}
-                      </p>
+                      <p className="text-sm font-medium text-red-800">{errorMessage}</p>
                     </div>
                   </div>
                 </div>
               )}
-
               {/* Navigation buttons */}
               <div className="mt-8 flex justify-between">
                 {currentStep > 1 ? (
@@ -619,16 +579,13 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                 ) : (
                   <div></div>
                 )}
-
                 {currentStep < 3 ? (
                   <button
                     type="button"
                     onClick={handleNextStep}
                     disabled={currentStep === 1 && !hasItems}
                     className={`px-6 py-2 bg-primary-600 rounded-md text-white font-medium hover:bg-primary-700 transition-colors ${
-                      currentStep === 1 && !hasItems
-                        ? 'opacity-50 cursor-not-allowed'
-                        : ''
+                      currentStep === 1 && !hasItems ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
                   >
                     Continue
