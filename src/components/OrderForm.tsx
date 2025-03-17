@@ -36,21 +36,19 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
 
   // Discount calculation per product
   const calculateDiscountForItem = (item: OrderItem): number => {
-    const discountRules: { [key: number]: { threshold: number; dealPrice: number } } = {
-      1: { threshold: 3, dealPrice: 18 },
-      2: { threshold: 2, dealPrice: 18 },
-      3: { threshold: 2, dealPrice: 8 },
-      4: { threshold: 2, dealPrice: 8 },
-    };
-    const rule = discountRules[item.id];
-    if (!rule || item.quantity < rule.threshold) return 0;
-    const groups = Math.floor(item.quantity / rule.threshold);
-    const normalPriceForGroup = item.price * rule.threshold;
-    const discount = groups * (normalPriceForGroup - rule.dealPrice);
-    return discount;
+    if (item.discountThreshold && item.discountPrice && item.quantity >= item.discountThreshold) {
+      const groups = Math.floor(item.quantity / item.discountThreshold);
+      const normalTotalForGroup = groups * item.discountThreshold * item.price;
+      const discountedTotalForGroup = groups * item.discountPrice;
+      return normalTotalForGroup - discountedTotalForGroup;
+    }
+    return 0;
   };
 
-  const totalDiscountSaved = items.reduce((acc, item) => acc + calculateDiscountForItem(item), 0);
+  const totalDiscountSaved = items.reduce(
+    (acc, item) => acc + calculateDiscountForItem(item),
+    0
+  );
 
   // Close modal with Escape key
   useEffect(() => {
@@ -74,30 +72,28 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
   }, [open]);
 
   const updateItemQuantity = (id: number, quantity: number) => {
-    setItems((prevItems) => {
-      const newItems = prevItems.map((item) => {
-        if (item.id === id) {
-          const updatedItem = { ...item, quantity };
-          const discountThresholds: { [key: number]: number } = {
-            1: 3,
-            2: 2,
-            3: 2,
-            4: 2,
-          };
-          const threshold = discountThresholds[id];
-          if (threshold && quantity >= threshold && !discountMessages[id]) {
-            setDiscountMessages((prev) => ({ ...prev, [id]: true }));
-            setTimeout(() => {
-              setDiscountMessages((prev) => ({ ...prev, [id]: false }));
-            }, 3000);
-          }
-          return updatedItem;
+  setItems((prevItems) =>
+    prevItems.map((item) => {
+      if (item.id === id) {
+        const updatedItem = { ...item, quantity };
+        // Use the discountThreshold directly from the item
+        if (
+          updatedItem.discountThreshold &&
+          quantity >= updatedItem.discountThreshold &&
+          !discountMessages[id]
+        ) {
+          setDiscountMessages((prev) => ({ ...prev, [id]: true }));
+          setTimeout(() => {
+            setDiscountMessages((prev) => ({ ...prev, [id]: false }));
+          }, 3000);
         }
-        return item;
-      });
-      return newItems;
-    });
-  };
+        return updatedItem;
+      }
+      return item;
+    })
+  );
+};
+
 
   const resetForm = () => {
     setItems(initialItems);
@@ -266,20 +262,10 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                     </span>
                     <span>
                       ${(() => {
-                        const discount = calculateDiscountForItem(item);
-                        if (discount > 0) {
-                          const groups = Math.floor(
-                            item.quantity / (item.id === 1 ? 3 : 2)
-                          );
-                          const discountRules: { [key: number]: { threshold: number; dealPrice: number } } = {
-                            1: { threshold: 3, dealPrice: 18 },
-                            2: { threshold: 2, dealPrice: 18 },
-                            3: { threshold: 2, dealPrice: 8 },
-                            4: { threshold: 2, dealPrice: 8 },
-                          };
-                          const rule = discountRules[item.id];
-                          const remainder = item.quantity % rule.threshold;
-                          const totalWithDiscount = groups * rule.dealPrice + remainder * item.price;
+                        if (item.discountThreshold && item.discountPrice && item.quantity >= item.discountThreshold) {
+                          const groups = Math.floor(item.quantity / item.discountThreshold);
+                          const remainder = item.quantity % item.discountThreshold;
+                          const totalWithDiscount = groups * item.discountPrice + remainder * item.price;
                           return totalWithDiscount.toFixed(2);
                         }
                         return (item.quantity * item.price).toFixed(2);
@@ -287,6 +273,7 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                     </span>
                   </div>
                 ))}
+
                 <div className="flex justify-between font-bold mt-2 pt-2 border-t">
                   <span>Total</span>
                   <span>${subtotal.toFixed(2)}</span>
@@ -332,20 +319,12 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                       <div key={item.id} className="py-4 flex justify-between items-center">
                         <div>
                           <p className="font-medium text-gray-900">{item.name}</p>
-                          <p className="text-sm text-gray-500">${item.price.toFixed(2)} each</p>
-                          {item.id === 1 && (
+                          <p className="text-sm text-gray-500">
+                            {item.disabled ? 'Not available' : `$${item.price.toFixed(2)} each`}
+                          </p>
+                          {item.discountThreshold && item.discountPrice && !item.disabled && (
                             <p className="text-xs text-green-600">
-                              Bulk discount: Buy 3 for $18.00
-                            </p>
-                          )}
-                          {item.id === 2 && (
-                            <p className="text-xs text-green-600">
-                              Bulk discount: Buy 2 for $18.00
-                            </p>
-                          )}
-                          {(item.id === 3 || item.id === 4) && (
-                            <p className="text-xs text-green-600">
-                              Bulk discount: Buy 2 for $8.00
+                              Bulk discount: Buy {item.discountThreshold} for ${item.discountPrice.toFixed(2)}
                             </p>
                           )}
                           {discountMessages[item.id] && (
@@ -355,27 +334,37 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                           )}
                         </div>
                         <div className="flex items-center">
-                          <button
-                            type="button"
-                            className="p-1 rounded-full text-gray-400 hover:text-gray-600"
-                            onClick={() =>
-                              updateItemQuantity(item.id, Math.max(0, item.quantity - 1))
-                            }
-                          >
-                            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                            </svg>
-                          </button>
-                          <span className="mx-3 w-6 text-center font-medium">{item.quantity}</span>
-                          <button
-                            type="button"
-                            className="p-1 rounded-full text-gray-400 hover:text-gray-600"
-                            onClick={() => updateItemQuantity(item.id, item.quantity + 1)}
-                          >
-                            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                          </button>
+                          {item.disabled ? (
+                            <span className="text-sm text-gray-400 font-semibold">
+                              Coming Soon
+                            </span>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                className="p-1 rounded-full text-gray-400 hover:text-gray-600"
+                                onClick={() =>
+                                  updateItemQuantity(item.id, Math.max(0, item.quantity - 1))
+                                }
+                              >
+                                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                                </svg>
+                              </button>
+                              <span className="mx-3 w-6 text-center font-medium">
+                                {item.quantity}
+                              </span>
+                              <button
+                                type="button"
+                                className="p-1 rounded-full text-gray-400 hover:text-gray-600"
+                                onClick={() => updateItemQuantity(item.id, item.quantity + 1)}
+                              >
+                                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                              </button>
+                            </>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -495,20 +484,10 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                         </span>
                         <span>
                           ${(() => {
-                            const discount = calculateDiscountForItem(item);
-                            if (discount > 0) {
-                              const groups = Math.floor(
-                                item.quantity / (item.id === 1 ? 3 : 2)
-                              );
-                              const discountRules: { [key: number]: { threshold: number; dealPrice: number } } = {
-                                1: { threshold: 3, dealPrice: 18 },
-                                2: { threshold: 2, dealPrice: 18 },
-                                3: { threshold: 2, dealPrice: 8 },
-                                4: { threshold: 2, dealPrice: 8 },
-                              };
-                              const rule = discountRules[item.id];
-                              const remainder = item.quantity % rule.threshold;
-                              const totalWithDiscount = groups * rule.dealPrice + remainder * item.price;
+                            if (item.discountThreshold && item.discountPrice && item.quantity >= item.discountThreshold) {
+                              const groups = Math.floor(item.quantity / item.discountThreshold);
+                              const remainder = item.quantity % item.discountThreshold;
+                              const totalWithDiscount = groups * item.discountPrice + remainder * item.price;
                               return totalWithDiscount.toFixed(2);
                             }
                             return (item.quantity * item.price).toFixed(2);
@@ -516,6 +495,7 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                         </span>
                       </div>
                     ))}
+
                     <div className="flex justify-between font-bold mt-2 pt-2 border-t">
                       <span>Total</span>
                       <span>${subtotal.toFixed(2)}</span>
@@ -526,6 +506,7 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                         <span>${totalDiscountSaved.toFixed(2)}</span>
                       </div>
                     )}
+
                   </div>
                   <div>
                     <h3 className="font-medium text-gray-900 mb-2">Contact Information</h3>
