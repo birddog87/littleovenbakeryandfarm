@@ -13,7 +13,8 @@ const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 if (!SPREADSHEET_ID) {
   throw new Error('GOOGLE_SHEET_ID environment variable is not set');
 }
-const SHEET_NAME = 'Orders';
+const ORDERS_SHEET = 'Orders'; // main orders sheet
+const STATUS_RANGE = 'OrderingStatus!A1'; // cell where ordering status is stored
 
 // Auth for Google Sheets - service account
 if (!process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
@@ -46,6 +47,26 @@ type Data = {
   message: string;
 };
 
+/**
+ * Checks the ordering status from the Google Sheet.
+ * Your sister can update the cell OrderingStatus!A1 in the sheet to "Enabled" or "Disabled".
+ */
+async function isOrderingEnabled(authClient: any): Promise<boolean> {
+  const sheets = google.sheets({ version: 'v4', auth: authClient });
+  try {
+    const res = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: STATUS_RANGE,
+    });
+    const status = res.data.values?.[0]?.[0];
+    return status && status.toLowerCase() === 'enabled';
+  } catch (error) {
+    console.error('Error reading ordering status:', error);
+    // If an error occurs, default to disabled to be safe.
+    return false;
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
@@ -56,6 +77,16 @@ export default async function handler(
 
   try {
     const { name, email, phone, items, comments, deliveryOption, address } = req.body as RequestBody;
+
+    // Get auth client and check if ordering is enabled
+    const authClient = await googleAuth.getClient();
+    const orderingEnabled = await isOrderingEnabled(authClient);
+    if (!orderingEnabled) {
+      return res.status(503).json({
+        success: false,
+        message: 'Ordering is temporarily paused. Please try again later.',
+      });
+    }
 
     // Format order items for email
     const itemDetails = items
@@ -163,7 +194,6 @@ export default async function handler(
     await sgMail.send(msg);
 
     // Write order to Google Sheets
-    const authClient = await googleAuth.getClient();
     const sheets = google.sheets('v4');
     const orderDate = new Date().toLocaleString();
     const rowData = [
@@ -182,7 +212,7 @@ export default async function handler(
     ];
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A:I`,
+      range: `${ORDERS_SHEET}!A:I`,
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [rowData]
