@@ -112,28 +112,48 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage('');
+  e.preventDefault();
+  setErrorMessage('');
 
-    if (!validateStep()) {
-      return;
+  if (!validateStep()) {
+    return;
+  }
+
+  setIsSubmitting(true);
+
+  try {
+    // Make a POST request to your API endpoint
+    const response = await fetch('/api/submit-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        email,
+        phone,
+        items,
+        comments,
+        deliveryOption,
+        address,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status}`);
     }
 
-    setIsSubmitting(true);
+    const data = await response.json();
+    console.log('Order response:', data);
 
-    try {
-      // Normally, you'd send the order data to an API here.
-      // We'll just simulate success:
-      setTimeout(() => {
-        setOrderSuccess(true);
-        setIsSubmitting(false);
-      }, 1000);
-    } catch (error) {
-      setErrorMessage('Network error. Please try again later.');
-      console.error('Error submitting order:', error);
-      setIsSubmitting(false);
-    }
-  };
+    // If successful, show success state
+    setOrderSuccess(true);
+    setIsSubmitting(false);
+  } catch (error) {
+    setErrorMessage('Network error. Please try again later.');
+    console.error('Error submitting order:', error);
+    setIsSubmitting(false);
+  }
+};
+
 
   // If the form is closed, render nothing
   if (!open) return null;
