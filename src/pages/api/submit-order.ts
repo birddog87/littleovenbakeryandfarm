@@ -3,14 +3,23 @@ import sgMail from '@sendgrid/mail';
 import { google } from 'googleapis';
 
 // Set SendGrid API key
+if (!process.env.SENDGRID_API_KEY) {
+  throw new Error('SENDGRID_API_KEY environment variable is not set');
+}
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Google Sheets setup
 const sheets = google.sheets('v4');
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
+if (!SPREADSHEET_ID) {
+  throw new Error('GOOGLE_SHEET_ID environment variable is not set');
+}
 const SHEET_NAME = 'Orders';
 
 // Auth for Google Sheets - service account
+if (!process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
+  throw new Error('GOOGLE_SERVICE_ACCOUNT_KEY environment variable is not set');
+}
 const auth = new google.auth.GoogleAuth({
   credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY),
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
@@ -28,7 +37,6 @@ export default async function handler(
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, message: 'Method not allowed' });
   }
-
   try {
     const { name, email, phone, items, comments, deliveryOption, address } = req.body;
     
@@ -45,7 +53,7 @@ export default async function handler(
     // Send email
     const msg = {
       to: 'brookehammond717@gmail.com', // Your bakery email
-      from: 'sales@thelittleoven.ca', // Verified sender email
+      from: 'sales@littleovenfarm.com', // Verified sender email
       subject: `New Order from ${name}`,
       html: `
         <h2>New Order from The Little Oven Website</h2>
