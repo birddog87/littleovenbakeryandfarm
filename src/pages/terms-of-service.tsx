@@ -58,7 +58,7 @@ export default function TermsOfService() {
                     Order Placement and Fulfillment
                   </h2>
                   <p className="mb-4 text-gray-700 leading-relaxed pl-11">
-                    Orders placed through our website are subject to availability and acceptance. We reserve the right to limit quantities or refuse service to anyone. Orders are typically ready for pickup during our designated pickup hours on weekends. Delivery is available within a 20km radius of Hagersville, Ontario.
+                    Orders placed through our website are subject to availability and acceptance. We reserve the right to limit quantities or refuse service to anyone. Orders are typically ready for pickup during our designated pickup hours on weekends. Delivery is available within a 2km radius of Hagersville, Ontario.
                   </p>
                 </section>
                 
