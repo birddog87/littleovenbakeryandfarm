@@ -35,7 +35,7 @@ export default function Home() {
     "@context": "https://schema.org",
     "@type": "Bakery",
     "name": "The Little Oven Bakery and Farm",
-    "image": "https://thelittleoven.ca/images/logo.jpg",
+    "image": "https://littleovenfarm.com/images/og-image.jpg",
     "description": "Artisanal bread and farm-fresh eggs made with love in Hagersville, Ontario.",
     "address": {
       "@type": "PostalAddress",
@@ -60,7 +60,7 @@ export default function Home() {
         "closes": "15:00"
       }
     ],
-    "menu": "https://thelittleoven.ca/#products",
+    "menu": "https://littleovenfarm.com/#products",
     "servesCuisine": ["Bakery", "Artisanal Bread"],
     "priceRange": "$"
   };
@@ -80,23 +80,28 @@ export default function Home() {
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://thelittleoven.ca/" />
+        <meta property="og:url" content="https://littleovenfarm.com/" />
         <meta property="og:title" content="The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs" />
         <meta
           property="og:description"
           content="Handcrafted bread and farm-fresh eggs from our family to yours. Made with love in Hagersville, Ontario."
         />
-        <meta property="og:image" content="https://thelittleoven.ca/images/og-image.jpg" />
+        <meta property="og:image" content="https://littleovenfarm.com/images/og-image.jpg" />
+        <meta property="og:image:width" content="1024" />
+        <meta property="og:image:height" content="1024" />
 
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://thelittleoven.ca/" />
+        <meta property="twitter:url" content="https://littleovenfarm.com/" />
         <meta property="twitter:title" content="The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs" />
         <meta
           property="twitter:description"
           content="Handcrafted bread and farm-fresh eggs from our family to yours. Made with love in Hagersville, Ontario."
         />
-        <meta property="twitter:image" content="https://thelittleoven.ca/images/twitter-card.jpg" />
+        <meta property="twitter:image" content="https://littleovenfarm.com/images/twitter-card.jpg" />
+
+        {/* Canonical URL */}
+        <link rel="canonical" href="https://littleovenfarm.com" />
 
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" />
