@@ -196,7 +196,11 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
-      <div className="relative bg-white rounded-lg max-w-xl w-full mx-4 shadow-2xl overflow-hidden transform transition-all duration-500 animate-fadeIn">
+      {/* 
+        Add 'max-h-[90vh] overflow-y-auto' so the modal can scroll 
+        if there are many items 
+      */}
+      <div className="relative bg-white rounded-lg max-w-xl w-full mx-4 shadow-2xl overflow-hidden transform transition-all duration-500 animate-fadeIn max-h-[90vh] overflow-y-auto">
         {!orderSuccess && (
           <div className="w-full bg-gray-200 h-1">
             <div
@@ -259,10 +263,18 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                     </span>
                     <span>
                       ${(() => {
-                        if (item.discountThreshold && item.discountPrice && item.quantity >= item.discountThreshold) {
-                          const groups = Math.floor(item.quantity / item.discountThreshold);
-                          const remainder = item.quantity % item.discountThreshold;
-                          const totalWithDiscount = groups * item.discountPrice + remainder * item.price;
+                        if (
+                          item.discountThreshold &&
+                          item.discountPrice &&
+                          item.quantity >= item.discountThreshold
+                        ) {
+                          const groups = Math.floor(
+                            item.quantity / item.discountThreshold
+                          );
+                          const remainder =
+                            item.quantity % item.discountThreshold;
+                          const totalWithDiscount =
+                            groups * item.discountPrice + remainder * item.price;
                           return totalWithDiscount.toFixed(2);
                         }
                         return (item.quantity * item.price).toFixed(2);
@@ -291,7 +303,9 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                     ? 'Pickup at store'
                     : 'Delivery to:'}
                 </p>
-                {deliveryOption === 'delivery' && <p className="italic">{address}</p>}
+                {deliveryOption === 'delivery' && (
+                  <p className="italic">{address}</p>
+                )}
                 {comments && (
                   <>
                     <p className="mt-2 font-medium">Special Instructions:</p>
@@ -312,17 +326,27 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                 <div className="space-y-6 animate-fadeIn">
                   <div className="border-t border-b border-gray-200 divide-y divide-gray-200">
                     {items.map((item) => (
-                      <div key={item.id} className="py-4 flex justify-between items-center">
+                      <div
+                        key={item.id}
+                        className="py-4 flex justify-between items-center"
+                      >
                         <div>
-                          <p className="font-medium text-gray-900">{item.name}</p>
-                          <p className="text-sm text-gray-500">
-                            {item.disabled ? 'Not available' : `$${item.price.toFixed(2)} each`}
+                          <p className="font-medium text-gray-900">
+                            {item.name}
                           </p>
-                          {item.discountThreshold && item.discountPrice && !item.disabled && (
-                            <p className="text-xs text-green-600">
-                              Bulk discount: Buy {item.discountThreshold} for ${item.discountPrice.toFixed(2)}
-                            </p>
-                          )}
+                          <p className="text-sm text-gray-500">
+                            {item.disabled
+                              ? 'Not available'
+                              : `$${item.price.toFixed(2)} each`}
+                          </p>
+                          {item.discountThreshold &&
+                            item.discountPrice &&
+                            !item.disabled && (
+                              <p className="text-xs text-green-600">
+                                Bulk discount: Buy {item.discountThreshold} for $
+                                {item.discountPrice.toFixed(2)}
+                              </p>
+                            )}
                           {discountMessages[item.id] && (
                             <p className="text-xs text-green-800 font-bold">
                               Bulk discount applied!
@@ -340,11 +364,24 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                                 type="button"
                                 className="p-1 rounded-full text-gray-400 hover:text-gray-600"
                                 onClick={() =>
-                                  updateItemQuantity(item.id, Math.max(0, item.quantity - 1))
+                                  updateItemQuantity(
+                                    item.id,
+                                    Math.max(0, item.quantity - 1)
+                                  )
                                 }
                               >
-                                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                                <svg
+                                  className="h-6 w-6"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M20 12H4"
+                                  />
                                 </svg>
                               </button>
                               <span className="mx-3 w-6 text-center font-medium">
@@ -353,10 +390,22 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                               <button
                                 type="button"
                                 className="p-1 rounded-full text-gray-400 hover:text-gray-600"
-                                onClick={() => updateItemQuantity(item.id, item.quantity + 1)}
+                                onClick={() =>
+                                  updateItemQuantity(item.id, item.quantity + 1)
+                                }
                               >
-                                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                <svg
+                                  className="h-6 w-6"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M12 4v16m8-8H4"
+                                  />
                                 </svg>
                               </button>
                             </>
@@ -371,7 +420,9 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                   </div>
                   {errorMessage && (
                     <div className="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                      <p className="text-sm font-medium text-red-800">{errorMessage}</p>
+                      <p className="text-sm font-medium text-red-800">
+                        {errorMessage}
+                      </p>
                     </div>
                   )}
                   <div className="flex justify-end mt-4">
@@ -391,7 +442,10 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
               {currentStep === 2 && (
                 <div className="space-y-6 animate-fadeIn">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Name *
                     </label>
                     <input
@@ -405,7 +459,10 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         Email
                       </label>
                       <input
@@ -418,7 +475,10 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                       />
                     </div>
                     <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label
+                        htmlFor="phone"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         Phone
                       </label>
                       <input
@@ -432,7 +492,9 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                     </div>
                   </div>
                   <div>
-                    <span className="block text-sm font-medium text-gray-700 mb-2">Delivery Options</span>
+                    <span className="block text-sm font-medium text-gray-700 mb-2">
+                      Delivery Options
+                    </span>
                     <div className="space-y-2">
                       <label className="flex items-center">
                         <input
@@ -442,7 +504,9 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                           onChange={() => setDeliveryOption('pickup')}
                           className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
                         />
-                        <span className="ml-2 text-gray-700">Pickup at bakery</span>
+                        <span className="ml-2 text-gray-700">
+                          Pickup at bakery
+                        </span>
                       </label>
                       <label className="flex items-center">
                         <input
@@ -458,7 +522,10 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                   </div>
                   {deliveryOption === 'delivery' && (
                     <div>
-                      <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label
+                        htmlFor="address"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
                         Delivery Address *
                       </label>
                       <textarea
@@ -472,7 +539,10 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                     </div>
                   )}
                   <div>
-                    <label htmlFor="comments" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="comments"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Special Instructions (optional)
                     </label>
                     <textarea
@@ -486,7 +556,9 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                   </div>
                   {errorMessage && (
                     <div className="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                      <p className="text-sm font-medium text-red-800">{errorMessage}</p>
+                      <p className="text-sm font-medium text-red-800">
+                        {errorMessage}
+                      </p>
                     </div>
                   )}
                   <div className="flex justify-between mt-4">
@@ -510,25 +582,41 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
               {currentStep === 3 && (
                 <div className="space-y-6 animate-fadeIn">
                   <div className="border-t border-b py-4">
-                    <h3 className="font-medium text-gray-900 mb-2">Order Summary</h3>
-                    {items.filter((item) => item.quantity > 0).map((item) => (
-                      <div key={item.id} className="flex justify-between py-2">
-                        <span>
-                          {item.quantity} x {item.name}
-                        </span>
-                        <span>
-                          ${(() => {
-                            if (item.discountThreshold && item.discountPrice && item.quantity >= item.discountThreshold) {
-                              const groups = Math.floor(item.quantity / item.discountThreshold);
-                              const remainder = item.quantity % item.discountThreshold;
-                              const totalWithDiscount = groups * item.discountPrice + remainder * item.price;
-                              return totalWithDiscount.toFixed(2);
-                            }
-                            return (item.quantity * item.price).toFixed(2);
-                          })()}
-                        </span>
-                      </div>
-                    ))}
+                    <h3 className="font-medium text-gray-900 mb-2">
+                      Order Summary
+                    </h3>
+                    {items
+                      .filter((item) => item.quantity > 0)
+                      .map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex justify-between py-2"
+                        >
+                          <span>
+                            {item.quantity} x {item.name}
+                          </span>
+                          <span>
+                            ${(() => {
+                              if (
+                                item.discountThreshold &&
+                                item.discountPrice &&
+                                item.quantity >= item.discountThreshold
+                              ) {
+                                const groups = Math.floor(
+                                  item.quantity / item.discountThreshold
+                                );
+                                const remainder =
+                                  item.quantity % item.discountThreshold;
+                                const totalWithDiscount =
+                                  groups * item.discountPrice +
+                                  remainder * item.price;
+                                return totalWithDiscount.toFixed(2);
+                              }
+                              return (item.quantity * item.price).toFixed(2);
+                            })()}
+                          </span>
+                        </div>
+                      ))}
                     <div className="flex justify-between font-bold mt-2 pt-2 border-t">
                       <span>Total</span>
                       <span>${subtotal.toFixed(2)}</span>
@@ -541,14 +629,20 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                     )}
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900 mb-2">Contact Information</h3>
+                    <h3 className="font-medium text-gray-900 mb-2">
+                      Contact Information
+                    </h3>
                     <p>{name}</p>
                     {email && <p>{email}</p>}
                     {phone && <p>{phone}</p>}
                     <p className="mt-2">
-                      {deliveryOption === 'pickup' ? 'Pickup at store' : 'Delivery to:'}
+                      {deliveryOption === 'pickup'
+                        ? 'Pickup at store'
+                        : 'Delivery to:'}
                     </p>
-                    {deliveryOption === 'delivery' && <p className="italic">{address}</p>}
+                    {deliveryOption === 'delivery' && (
+                      <p className="italic">{address}</p>
+                    )}
                     {comments && (
                       <>
                         <p className="mt-2 font-medium">Special Instructions:</p>
@@ -558,7 +652,9 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                   </div>
                   {errorMessage && (
                     <div className="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                      <p className="text-sm font-medium text-red-800">{errorMessage}</p>
+                      <p className="text-sm font-medium text-red-800">
+                        {errorMessage}
+                      </p>
                     </div>
                   )}
                   <div className="flex justify-between mt-4">
