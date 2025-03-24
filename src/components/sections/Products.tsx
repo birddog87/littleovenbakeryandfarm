@@ -49,7 +49,16 @@ const products = [
       'Tangy, slow-fermented bread with a chewy crust and airy crumb. Stay tuned for our newest loaf!',
     price: 'Coming Soon',
     deals: [],
-    image: '/images/sourdough.jpg', // Replace with your actual sourdough image or a placeholder
+    image: '/images/sourdough.jpg',
+  },
+  {
+    id: 6,
+    name: 'Hamburger Buns',
+    description:
+      'Indulge in our gourmet hamburger buns—pillow‑soft on the inside with a delicately crisp, golden egg wash finish. Perfectly paired with your favorite grilled burger for a sumptuous summer treat.',
+    price: '$6.00 for 8 buns',
+    deals: ['$10.00 for 16 buns'],
+    image: '/images/hamburger-buns.jpg',
   },
 ];
 
@@ -88,19 +97,14 @@ export default function Products({ openOrderForm }: ProductsProps) {
   }, []);
 
   return (
-    <section
-      id="products"
-      ref={sectionRef}
-      className="py-20 bg-amber-50 opacity-0"
-    >
+    <section id="products" ref={sectionRef} className="py-20 bg-amber-50 opacity-0">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4 font-serif">
             Our Fresh Products
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            All our products are made fresh using quality ingredients. Pre-order
-            for pickup or local delivery.
+            All our products are made fresh using quality ingredients. Pre-order for pickup or local delivery.
           </p>
         </div>
 
@@ -121,7 +125,6 @@ export default function Products({ openOrderForm }: ProductsProps) {
                   className="w-full h-full object-cover"
                 />
               </div>
-
               <div className="p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
                   {product.name}
@@ -154,3 +157,4 @@ export default function Products({ openOrderForm }: ProductsProps) {
     </section>
   );
 }
+

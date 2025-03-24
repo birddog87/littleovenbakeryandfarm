@@ -1,6 +1,6 @@
 // src/components/OrderForm.tsx
 import { useState, useEffect } from 'react';
-import { initialItems, OrderItem, calculateSubtotal } from '../utils/orderUtils'; 
+import { initialItems, OrderItem, calculateSubtotal } from '../utils/orderUtils';
 
 const validateEmail = (email: string): boolean => {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -34,7 +34,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
   const subtotal = calculateSubtotal(items);
   const hasItems = items.some((item) => item.quantity > 0);
 
-  // Discount calculation per product
   const calculateDiscountForItem = (item: OrderItem): number => {
     if (item.discountThreshold && item.discountPrice && item.quantity >= item.discountThreshold) {
       const groups = Math.floor(item.quantity / item.discountThreshold);
@@ -50,7 +49,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
     0
   );
 
-  // Close modal with Escape key
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
@@ -59,7 +57,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
     return () => window.removeEventListener('keydown', handleEsc);
   }, [setOpen]);
 
-  // Prevent body scrolling when modal is open
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -72,28 +69,26 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
   }, [open]);
 
   const updateItemQuantity = (id: number, quantity: number) => {
-  setItems((prevItems) =>
-    prevItems.map((item) => {
-      if (item.id === id) {
-        const updatedItem = { ...item, quantity };
-        // Use the discountThreshold directly from the item
-        if (
-          updatedItem.discountThreshold &&
-          quantity >= updatedItem.discountThreshold &&
-          !discountMessages[id]
-        ) {
-          setDiscountMessages((prev) => ({ ...prev, [id]: true }));
-          setTimeout(() => {
-            setDiscountMessages((prev) => ({ ...prev, [id]: false }));
-          }, 3000);
+    setItems((prevItems) =>
+      prevItems.map((item) => {
+        if (item.id === id) {
+          const updatedItem = { ...item, quantity };
+          if (
+            updatedItem.discountThreshold &&
+            quantity >= updatedItem.discountThreshold &&
+            !discountMessages[id]
+          ) {
+            setDiscountMessages((prev) => ({ ...prev, [id]: true }));
+            setTimeout(() => {
+              setDiscountMessages((prev) => ({ ...prev, [id]: false }));
+            }, 3000);
+          }
+          return updatedItem;
         }
-        return updatedItem;
-      }
-      return item;
-    })
-  );
-};
-
+        return item;
+      })
+    );
+  };
 
   const resetForm = () => {
     setItems(initialItems);
@@ -200,21 +195,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
       <div className="relative bg-white rounded-lg max-w-xl w-full mx-4 shadow-2xl overflow-hidden transform transition-all duration-500 animate-fadeIn">
-        {!orderSuccess && (
-          <div className="w-full bg-gray-200 h-1">
-            <div
-              className="bg-primary-600 h-1 transition-all duration-500 ease-in-out"
-              style={{
-                width:
-                  currentStep === 1
-                    ? '33%'
-                    : currentStep === 2
-                    ? '66%'
-                    : '100%',
-              }}
-            />
-          </div>
-        )}
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
@@ -223,7 +203,7 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <div className="p-6 sm:p-8">
+        <div className="max-h-[90vh] overflow-y-auto p-6 sm:p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 font-serif">
             {orderSuccess
               ? 'Order Confirmation'
@@ -273,7 +253,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                     </span>
                   </div>
                 ))}
-
                 <div className="flex justify-between font-bold mt-2 pt-2 border-t">
                   <span>Total</span>
                   <span>${subtotal.toFixed(2)}</span>
@@ -291,9 +270,7 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                 {email && <p>{email}</p>}
                 {phone && <p>{phone}</p>}
                 <p className="mt-2">
-                  {deliveryOption === 'pickup'
-                    ? 'Pickup at store'
-                    : 'Delivery to:'}
+                  {deliveryOption === 'pickup' ? 'Pickup at store' : 'Delivery to:'}
                 </p>
                 {deliveryOption === 'delivery' && <p className="italic">{address}</p>}
                 {comments && (
@@ -360,7 +337,7 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                                 onClick={() => updateItemQuantity(item.id, item.quantity + 1)}
                               >
                                 <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                 </svg>
                               </button>
                             </>
@@ -369,110 +346,95 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                       </div>
                     ))}
                   </div>
-                  <div className="flex justify-between text-lg font-medium">
-                    <span>Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                  {errorMessage && (
+                    <p className="text-red-500 text-sm font-medium">{errorMessage}</p>
+                  )}
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={handleNextStep}
+                      className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-md transition-colors"
+                    >
+                      Next
+                    </button>
                   </div>
                 </div>
               )}
+
               {currentStep === 2 && (
                 <div className="space-y-6 animate-fadeIn">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                      Name *
-                    </label>
+                  <div className="space-y-4">
                     <input
                       type="text"
-                      id="name"
+                      placeholder="Your Name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="Your full name"
+                      className="w-full border border-gray-300 rounded-md p-3"
                     />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      type="email"
+                      placeholder="Email Address"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full border border-gray-300 rounded-md p-3"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Phone Number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full border border-gray-300 rounded-md p-3"
+                    />
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                        Email
-                      </label>
+                      <label className="block text-gray-700 mb-2">Delivery Option</label>
+                      <select
+                        value={deliveryOption}
+                        onChange={(e) => setDeliveryOption(e.target.value)}
+                        className="w-full border border-gray-300 rounded-md p-3"
+                      >
+                        <option value="pickup">Pickup</option>
+                        <option value="delivery">Delivery</option>
+                      </select>
+                    </div>
+                    {deliveryOption === 'delivery' && (
                       <input
-                        type="email"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                        placeholder="your@email.com"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                        Phone
-                      </label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                        placeholder="(123) 456-7890"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <span className="block text-sm font-medium text-gray-700 mb-2">Delivery Options</span>
-                    <div className="space-y-2">
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="delivery-option"
-                          checked={deliveryOption === 'pickup'}
-                          onChange={() => setDeliveryOption('pickup')}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
-                        />
-                        <span className="ml-2 text-gray-700">Pickup at bakery (107 Concession 17 Walpole)</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="delivery-option"
-                          checked={deliveryOption === 'delivery'}
-                          onChange={() => setDeliveryOption('delivery')}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
-                        />
-                        <span className="ml-2 text-gray-700">Local Delivery (within 2km of Hagersville)</span>
-                      </label>
-                    </div>
-                  </div>
-                  {deliveryOption === 'delivery' && (
-                    <div>
-                      <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                        Delivery Address *
-                      </label>
-                      <textarea
-                        id="address"
+                        type="text"
+                        placeholder="Delivery Address"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
-                        rows={3}
-                        className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                        placeholder="Your complete delivery address"
+                        className="w-full border border-gray-300 rounded-md p-3"
                       />
-                    </div>
-                  )}
-                  <div>
-                    <label htmlFor="comments" className="block text-sm font-medium text-gray-700 mb-1">
-                      Special Instructions (optional)
-                    </label>
+                    )}
                     <textarea
-                      id="comments"
+                      placeholder="Special Instructions (optional)"
                       value={comments}
                       onChange={(e) => setComments(e.target.value)}
-                      rows={2}
-                      className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="Any special requests or instructions for your order"
+                      className="w-full border border-gray-300 rounded-md p-3"
+                      rows={4}
                     />
+                  </div>
+                  {errorMessage && (
+                    <p className="text-red-500 text-sm font-medium">{errorMessage}</p>
+                  )}
+                  <div className="flex justify-between">
+                    <button
+                      type="button"
+                      onClick={handlePrevStep}
+                      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-md transition-colors"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNextStep}
+                      className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-md transition-colors"
+                    >
+                      Next
+                    </button>
                   </div>
                 </div>
               )}
+
               {currentStep === 3 && (
                 <div className="space-y-6 animate-fadeIn">
                   <div className="border-t border-b py-4">
@@ -495,7 +457,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                         </span>
                       </div>
                     ))}
-
                     <div className="flex justify-between font-bold mt-2 pt-2 border-t">
                       <span>Total</span>
                       <span>${subtotal.toFixed(2)}</span>
@@ -506,7 +467,6 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                         <span>${totalDiscountSaved.toFixed(2)}</span>
                       </div>
                     )}
-
                   </div>
                   <div>
                     <h3 className="font-medium text-gray-900 mb-2">Contact Information</h3>
@@ -514,9 +474,7 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                     {email && <p>{email}</p>}
                     {phone && <p>{phone}</p>}
                     <p className="mt-2">
-                      {deliveryOption === 'pickup'
-                        ? 'Pickup at store'
-                        : 'Delivery to:'}
+                      {deliveryOption === 'pickup' ? 'Pickup at store' : 'Delivery to:'}
                     </p>
                     {deliveryOption === 'delivery' && <p className="italic">{address}</p>}
                     {comments && (
@@ -526,61 +484,27 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
                       </>
                     )}
                   </div>
-                </div>
-              )}
-              {errorMessage && (
-                <div className="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                  <div className="flex">
-                    <div className="flex-shrink-0">
-                      <svg className="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-red-800">{errorMessage}</p>
-                    </div>
+                  {errorMessage && (
+                    <p className="text-red-500 text-sm font-medium">{errorMessage}</p>
+                  )}
+                  <div className="flex justify-between">
+                    <button
+                      type="button"
+                      onClick={handlePrevStep}
+                      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-md transition-colors"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-md transition-colors"
+                    >
+                      {isSubmitting ? 'Submitting...' : 'Place Order'}
+                    </button>
                   </div>
                 </div>
               )}
-              <div className="mt-8 flex justify-between">
-                {currentStep > 1 ? (
-                  <button
-                    type="button"
-                    onClick={handlePrevStep}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 transition-colors"
-                  >
-                    Back
-                  </button>
-                ) : (
-                  <div></div>
-                )}
-                {currentStep < 3 ? (
-                  <button
-                    type="button"
-                    onClick={handleNextStep}
-                    disabled={currentStep === 1 && !hasItems}
-                    className={`px-6 py-2 bg-primary-600 rounded-md text-white font-medium hover:bg-primary-700 transition-colors ${
-                      currentStep === 1 && !hasItems ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                  >
-                    Continue
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className={`px-6 py-2 bg-primary-600 rounded-md text-white font-medium hover:bg-primary-700 transition-colors ${
-                      isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                  >
-                    {isSubmitting ? 'Submitting...' : 'Place Order'}
-                  </button>
-                )}
-              </div>
             </form>
           )}
         </div>
