@@ -1,5 +1,3 @@
-// src/utils/orderUtils.ts
-
 export interface OrderItem {
   id: number;
   name: string;
@@ -7,7 +5,7 @@ export interface OrderItem {
   quantity: number;
   description?: string;
   discountThreshold?: number;  // Quantity at which a discount applies
-  discountPrice?: number;      // Discounted price for each group of discountThreshold items
+  discountPrice?: number;      // Total price for each group of discountThreshold items
   disabled?: boolean;          // If the item is not available for ordering (e.g., coming soon)
 }
 
@@ -15,7 +13,7 @@ export const initialItems: OrderItem[] = [
   {
     id: 1,
     name: 'Farm Fresh Eggs (Carton)',
-    price: 7, // $7 per carton
+    price: 7,
     quantity: 0,
     description: 'Dozen free-range eggs. (Deal: 3 cartons for $18.)',
     discountThreshold: 3,
@@ -24,14 +22,14 @@ export const initialItems: OrderItem[] = [
   {
     id: 2,
     name: 'Farm Fresh Eggs (Flat 30)',
-    price: 15, // $15 for 30 eggs flat
+    price: 15,
     quantity: 0,
     description: '30 eggs flat at a fixed price of $15.',
   },
   {
     id: 3,
     name: 'Crunchy Round Loaf',
-    price: 6, // $6 per loaf
+    price: 6,
     quantity: 0,
     description: 'Rustic artisanal loaf. (Deal: 2 for $10.)',
     discountThreshold: 2,
@@ -40,7 +38,7 @@ export const initialItems: OrderItem[] = [
   {
     id: 4,
     name: 'Sandwich Bread',
-    price: 7, // $7 per loaf
+    price: 7,
     quantity: 0,
     description: 'Soft loaf perfect for sandwiches. (Deal: 2 for $12.)',
     discountThreshold: 2,
@@ -49,7 +47,7 @@ export const initialItems: OrderItem[] = [
   {
     id: 5,
     name: 'French Bread',
-    price: 7, // $7 per loaf
+    price: 7,
     quantity: 0,
     description: 'Classic baguette style. (Deal: 2 for $12.)',
     discountThreshold: 2,
@@ -58,10 +56,20 @@ export const initialItems: OrderItem[] = [
   {
     id: 6,
     name: 'Sourdough Bread (Coming Soon)',
-    price: 0, // Not available for order yet
+    price: 0,
     quantity: 0,
     description: 'Tangy, slow-fermented bread. Available soon!',
     disabled: true,
+  },
+  // New hamburger buns item:
+  {
+    id: 7,
+    name: 'Hamburger Buns',
+    price: 0.75, // $0.75 per bun so that 8 buns cost $6 (8 x 0.75 = $6)
+    quantity: 0,
+    description: 'Pillow soft hamburger buns with a lovely egg wash finish. Perfect for pairing with your favorite grilled burger.',
+    discountThreshold: 16, // Deal applies when ordering 16 buns or more
+    discountPrice: 10,     // 16 buns for $10 under the deal
   },
 ];
 
