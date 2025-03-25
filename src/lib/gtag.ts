@@ -1,5 +1,5 @@
 // src/lib/gtag.ts
-export const GA_TRACKING_ID = 'G-7YDE4BJR0W';
+export const GA_TRACKING_ID = 'G-CLKFJ8C7K6';
 
 // https://developers.google.com/analytics/devguides/collection/gtagjs/pages
 export const pageview = (url: string): void => {
