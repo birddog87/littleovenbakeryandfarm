@@ -47,7 +47,15 @@ export default async function handler(
     
     // Write email to Google Sheets
     const sheets = google.sheets('v4');
-    const subscriptionDate = new Date().toLocaleString();
+    const subscriptionDate = new Date().toLocaleString('en-US', { 
+        timeZone: 'America/Toronto',
+        year: 'numeric', 
+        month: 'numeric', 
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      });
     const rowData = [email, subscriptionDate];
     
     await sheets.spreadsheets.values.append({

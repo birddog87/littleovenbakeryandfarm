@@ -182,7 +182,15 @@ export default async function handler(
         ${comments ? `<p><strong>Special Instructions:</strong> ${comments}</p>` : ''}
       </div>
       <div class="footer">
-        <p>Order placed on ${new Date().toLocaleString()}.</p>
+        <p>Order placed on ${new Date().toLocaleString('en-US', { 
+          timeZone: 'America/Toronto',
+          year: 'numeric', 
+          month: 'numeric', 
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: true
+        })}.</p>
         <p>Thank you for choosing The Little Oven Bakery and Farm!</p>
       </div>
     </div>
@@ -391,7 +399,15 @@ if (email) {
 
     // Write order to Google Sheets
     const sheets = google.sheets('v4');
-    const orderDate = new Date().toLocaleString();
+    const orderDate = new Date().toLocaleString('en-US', { 
+      timeZone: 'America/Toronto',
+      year: 'numeric', 
+      month: 'numeric', 
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    });
     const rowData = [
       orderDate,
       name,
