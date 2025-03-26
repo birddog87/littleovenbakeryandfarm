@@ -1,14 +1,11 @@
-// Updated src/components/layout/Footer.tsx
-import Newsletter from '../Newsletter';
-
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="bg-gray-900 text-white py-12">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-          <div className="md:col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div>
             <h3 className="text-xl font-bold mb-4 text-primary-100">
               The Little Oven Bakery and Farm
             </h3>
@@ -50,21 +47,10 @@ export default function Footer() {
               <span className="text-white">9AM - 5PM</span>
             </div>
           </div>
-
-          <div>
-            {/* Newsletter signup form */}
-            <div className="bg-gray-800 rounded-lg p-6">
-              <Newsletter />
-            </div>
-          </div>
         </div>
 
         <div className="mt-12 border-t border-gray-700 pt-4 text-center text-gray-500 text-sm">
           &copy; {currentYear} The Little Oven Bakery and Farm. All rights reserved.
-          <div className="mt-2 flex justify-center space-x-4">
-            <a href="/privacy-policy" className="hover:text-gray-300 transition-colors">Privacy Policy</a>
-            <a href="/terms-of-service" className="hover:text-gray-300 transition-colors">Terms of Service</a>
-          </div>
         </div>
       </div>
     </footer>
