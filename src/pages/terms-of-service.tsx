@@ -2,6 +2,7 @@
 import Head from 'next/head';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import Newsletter from '../components/Newsletter';
 import { useState, useEffect } from 'react';
 
 export default function TermsOfService() {
@@ -155,7 +156,7 @@ export default function TermsOfService() {
           )}
         </div>
       </main>
-      
+      <Newsletter />
       <Footer />
     </>
   );

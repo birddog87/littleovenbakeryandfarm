@@ -1,3 +1,4 @@
+// src/pages/index.tsx 
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -5,6 +6,7 @@ import Header from '../components/layout/Header';
 import Hero from '../components/sections/Hero';
 import Products from '../components/sections/Products';
 import About from '../components/sections/About';
+import Newsletter from '../components/Newsletter';
 import Footer from '../components/layout/Footer';
 import OrderForm from '../components/OrderForm';
 
@@ -121,6 +123,7 @@ export default function Home() {
           <Hero openOrderForm={() => setOrderFormOpen(true)} />
           <Products openOrderForm={() => setOrderFormOpen(true)} />
           <About />
+          <Newsletter />
           <Footer />
           <OrderForm open={orderFormOpen} setOpen={setOrderFormOpen} />
         </>
