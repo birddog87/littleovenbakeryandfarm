@@ -1,4 +1,3 @@
-// src/components/sections/About.tsx (Updated)
 import { useEffect, useRef } from 'react';
 
 export default function About() {
@@ -45,8 +44,8 @@ export default function About() {
               and the freshest ingredients.
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-12">
-              <div>
+            <div className="flex flex-col md:flex-row gap-8 my-12">
+              <div className="md:w-1/2">
                 <h3 className="text-2xl font-bold text-primary-700 mb-4">Our Philosophy</h3>
                 <p className="text-gray-700">
                   Every loaf is handcrafted with care in our home kitchen, using simple ingredients and time-honored 
@@ -54,7 +53,7 @@ export default function About() {
                   develop rich flavors and perfect textures.
                 </p>
               </div>
-              <div>
+              <div className="md:w-1/2">
                 <h3 className="text-2xl font-bold text-primary-700 mb-4">Our Chickens</h3>
                 <p className="text-gray-700">
                   In addition to our artisanal bread, we offer farm-fresh eggs from our own free-range hens. Our chickens 
@@ -64,31 +63,34 @@ export default function About() {
               </div>
             </div>
             
-            <div ref={contactRef} className="bg-white p-8 rounded-lg shadow-md border border-primary-100 mt-12 opacity-0">
-              <h3 className="text-2xl font-bold text-primary-700 mb-6">Visit Us</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <p className="font-bold text-gray-800 mb-2">Address:</p>
-                  <p className="text-gray-700">
-                    Haversville, Ontario N0E 1H0<br />
-                    Canada
-                  </p>
-                </div>
-                <div>
-                  <p className="font-bold text-gray-800 mb-2">Contact:</p>
-                  <p className="text-gray-700">
-                    Phone: (905) 745-5730<br />
-                    Email: sales@littleovenfarm.com
-                  </p>
-                </div>
-                <div>
-                  <p className="font-bold text-gray-800 mb-2">Hours:</p>
-                  <p className="text-gray-700">
-                    Order anytime online<br />
-                    Pickup available:<br />
-                    Saturday: 9AM - 5PM<br />
-                    Sunday: 9AM - 5PM
-                  </p>
+            <div ref={contactRef} className="bg-white p-8 rounded-lg shadow-md border border-primary-100 mt-12 relative overflow-hidden opacity-0">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-100 rounded-full transform translate-x-16 -translate-y-16"></div>
+              <div className="relative">
+                <h3 className="text-2xl font-bold text-primary-700 mb-6">Visit Us</h3>
+                <div className="flex flex-col md:flex-row gap-12">
+                  <div>
+                    <p className="font-bold text-gray-800 mb-2">Address:</p>
+                    <p className="text-gray-700">
+                      Haversville, Ontario N0E 1H0<br />
+                      Canada
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-800 mb-2">Contact:</p>
+                    <p className="text-gray-700">
+                      Phone: (905) 745-5730<br />
+                      Email: sales@littleovenfarm.com
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-800 mb-2">Hours:</p>
+                    <p className="text-gray-700">
+                      Order anytime online<br />
+                      Pickup available:<br />
+                      Saturday: 9AM - 5PM<br />
+                      Sunday: 9AM - 5PM
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
