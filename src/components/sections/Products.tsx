@@ -32,7 +32,7 @@ const products = [
       'Soft, sliced bread perfect for sandwiches and toast. Made with unbleached flour and no preservatives or artificial ingredients.',
     price: '$7.00 each',
     deals: ['2 for $12.00'],
-    image: '/images/sandwich-bread.png',
+    image: '/images/sandwich-bread.jpg',
   },
   {
     id: 4,
@@ -120,14 +120,14 @@ export default function Products({ openOrderForm }: ProductsProps) {
               style={{ animationDelay: `${index * 150}ms` }}
             >
               <div className="h-48 bg-primary-50 overflow-hidden">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                  style={{ 
-                    objectPosition: product.imagePosition === 'top' ? 'center top' : 'center center' 
-                  }}
-                />
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover"
+                style={{ 
+                  objectPosition: product.imagePosition === 'top' ? 'center top' : 'center center' 
+                }}
+              />
               </div>
               <div className="p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
