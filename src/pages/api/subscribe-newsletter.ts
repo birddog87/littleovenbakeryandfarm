@@ -1,6 +1,7 @@
 // src/pages/api/subscribe-newsletter.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { google } from 'googleapis';
+import { toZonedTime, format } from 'date-fns-tz';
 
 // Google Sheets setup
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
@@ -21,6 +22,15 @@ const googleAuth = new google.auth.GoogleAuth({
 type Data = {
   success: boolean;
   message: string;
+};
+
+// Helper function to get a formatted local timestamp in America/Toronto
+const getLocalTimestamp = (): string => {
+  const now = new Date();
+  const timeZone = 'America/Toronto';
+  const zonedDate = toZonedTime(now, timeZone);
+  // Format example: "3/25/2025, 10:56 PM"
+  return format(zonedDate, 'M/d/yyyy, h:mm a', { timeZone });
 };
 
 export default async function handler(
@@ -45,17 +55,9 @@ export default async function handler(
     // Get auth client
     const authClient = await googleAuth.getClient();
     
-    // Write email to Google Sheets
+    // Write email to Google Sheets with local timestamp
     const sheets = google.sheets('v4');
-    const subscriptionDate = new Date().toLocaleString('en-US', { 
-        timeZone: 'America/Toronto',
-        year: 'numeric', 
-        month: 'numeric', 
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true
-      });
+    const subscriptionDate = getLocalTimestamp();
     const rowData = [email, subscriptionDate];
     
     await sheets.spreadsheets.values.append({

@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import sgMail from '@sendgrid/mail';
 import { google } from 'googleapis';
+import { toZonedTime, format } from 'date-fns-tz';
 
 // Set SendGrid API key
 if (!process.env.SENDGRID_API_KEY) {
@@ -45,6 +46,15 @@ interface RequestBody {
 type Data = {
   success: boolean;
   message: string;
+};
+
+// Helper function to get a formatted local timestamp in America/Toronto
+const getLocalTimestamp = (): string => {
+  const now = new Date();
+  const timeZone = 'America/Toronto';
+  const zonedDate = toZonedTime(now, timeZone);
+  // Format example: "3/25/2025, 10:56 PM"
+  return format(zonedDate, 'M/d/yyyy, h:mm a', { timeZone });
 };
 
 /**
@@ -101,7 +111,10 @@ export default async function handler(
       .filter((item) => item.quantity > 0)
       .reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-    // Beautiful HTML email template
+    // Generate local timestamp for order
+    const orderTimestamp = getLocalTimestamp();
+
+    // HTML email template for the bakery
     const msg = {
       to: 'brookehammond717@gmail.com', // Bakery email
       bcc: 'blender7@gmail.com',
@@ -175,22 +188,14 @@ export default async function handler(
       <div class="order-details">
         <h2>New Order Received</h2>
         <p><strong>Customer:</strong> ${name}</p>
-        <p><strong>Contact:</strong> ${email ? email : ''} ${phone ? phone : ''}</p>
+        <p><strong>Contact:</strong> ${email || ''} ${phone || ''}</p>
         <p><strong>${deliveryOption === 'pickup' ? 'Pickup' : 'Delivery'}:</strong> ${deliveryOption === 'delivery' ? address : 'Store Pickup'}</p>
         <p><strong>Order Items:</strong><br>${itemDetails}</p>
         <p><strong>Total:</strong> $${subtotal.toFixed(2)}</p>
         ${comments ? `<p><strong>Special Instructions:</strong> ${comments}</p>` : ''}
       </div>
       <div class="footer">
-        <p>Order placed on ${new Date().toLocaleString('en-US', { 
-          timeZone: 'America/Toronto',
-          year: 'numeric', 
-          month: 'numeric', 
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          hour12: true
-        })}.</p>
+        <p>Order placed on ${orderTimestamp}.</p>
         <p>Thank you for choosing The Little Oven Bakery and Farm!</p>
       </div>
     </div>
@@ -199,16 +204,16 @@ export default async function handler(
 `
     };
 
-    // Send email
+    // Send email to bakery
     await sgMail.send(msg);
 
-    // Only send confirmation email if customer provided an email
-if (email) {
-  const confirmationEmail = {
-    to: email, // Customer email
-    from: 'sales@littleovenfarm.com', // Your verified sender
-    subject: 'Your Order Confirmation - The Little Oven Bakery and Farm',
-    html: `
+    // Send confirmation email to customer if provided
+    if (email) {
+      const confirmationEmail = {
+        to: email, // Customer email
+        from: 'sales@littleovenfarm.com', // Verified sender
+        subject: 'Your Order Confirmation - The Little Oven Bakery and Farm',
+        html: `
 <!DOCTYPE html>
 <html>
   <head>
@@ -390,24 +395,16 @@ if (email) {
     </div>
   </body>
 </html>
-    `
-  };
+        `
+      };
+      
+      // Send confirmation email to customer
+      await sgMail.send(confirmationEmail);
+    }
 
-  // Send confirmation email to customer
-  await sgMail.send(confirmationEmail);
-}
-
-    // Write order to Google Sheets
+    // Write order to Google Sheets using the local timestamp
     const sheets = google.sheets('v4');
-    const orderDate = new Date().toLocaleString('en-US', { 
-      timeZone: 'America/Toronto',
-      year: 'numeric', 
-      month: 'numeric', 
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true
-    });
+    const orderDate = getLocalTimestamp();
     const rowData = [
       orderDate,
       name,
