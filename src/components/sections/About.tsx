@@ -1,9 +1,12 @@
+// Modified src/components/sections/About.tsx
 import { useEffect, useRef } from 'react';
+import Newsletter from '../Newsletter';
 
 export default function About() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
+  const newsletterRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -20,11 +23,13 @@ export default function About() {
     if (sectionRef.current) observer.observe(sectionRef.current);
     if (contentRef.current) observer.observe(contentRef.current);
     if (contactRef.current) observer.observe(contactRef.current);
+    if (newsletterRef.current) observer.observe(newsletterRef.current);
     
     return () => {
       if (sectionRef.current) observer.unobserve(sectionRef.current);
       if (contentRef.current) observer.unobserve(contentRef.current);
       if (contactRef.current) observer.unobserve(contactRef.current);
+      if (newsletterRef.current) observer.unobserve(newsletterRef.current);
     };
   }, []);
 
@@ -63,35 +68,41 @@ export default function About() {
               </div>
             </div>
             
-            <div ref={contactRef} className="bg-white p-8 rounded-lg shadow-md border border-primary-100 mt-12 relative overflow-hidden opacity-0">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-100 rounded-full transform translate-x-16 -translate-y-16"></div>
-              <div className="relative">
-                <h3 className="text-2xl font-bold text-primary-700 mb-6">Visit Us</h3>
-                <div className="flex flex-col md:flex-row gap-12">
-                  <div>
-                    <p className="font-bold text-gray-800 mb-2">Address:</p>
-                    <p className="text-gray-700">
-                      Haversville, Ontario N0E 1H0<br />
-                      Canada
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-800 mb-2">Contact:</p>
-                    <p className="text-gray-700">
-                      Phone: (905) 745-5730<br />
-                      Email: sales@littleovenfarm.com
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-800 mb-2">Hours:</p>
-                    <p className="text-gray-700">
-                      Order anytime online<br />
-                      Pickup available:<br />
-                      Saturday: 9AM - 5PM<br />
-                      Sunday: 9AM - 5PM
-                    </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+              <div ref={contactRef} className="bg-white p-8 rounded-lg shadow-md border border-primary-100 relative overflow-hidden opacity-0">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary-100 rounded-full transform translate-x-16 -translate-y-16"></div>
+                <div className="relative">
+                  <h3 className="text-2xl font-bold text-primary-700 mb-6">Visit Us</h3>
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <p className="font-bold text-gray-800 mb-2">Address:</p>
+                      <p className="text-gray-700">
+                        Haversville, Ontario N0E 1H0<br />
+                        Canada
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-800 mb-2">Contact:</p>
+                      <p className="text-gray-700">
+                        Phone: (905) 745-5730<br />
+                        Email: sales@littleovenfarm.com
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-800 mb-2">Hours:</p>
+                      <p className="text-gray-700">
+                        Order anytime online<br />
+                        Pickup available:<br />
+                        Saturday: 9AM - 5PM<br />
+                        Sunday: 9AM - 5PM
+                      </p>
+                    </div>
                   </div>
                 </div>
+              </div>
+              
+              <div ref={newsletterRef} className="opacity-0">
+                <Newsletter />
               </div>
             </div>
           </div>
