@@ -6,10 +6,10 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        {/* Global Site Tag (gtag.js) - Google Analytics */}
+        {/* Google tag (gtag.js) */}
         <script
           async
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+          src="https://www.googletagmanager.com/gtag/js?id=G-CLKFJ8C7K6"
         />
         <script
           dangerouslySetInnerHTML={{
@@ -17,9 +17,7 @@ export default function Document() {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}', {
-              page_path: window.location.pathname,
-            });
+            gtag('config', 'G-CLKFJ8C7K6');
           `,
           }}
         />
