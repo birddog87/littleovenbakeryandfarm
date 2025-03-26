@@ -51,6 +51,10 @@ export default function Footer() {
 
         <div className="mt-12 border-t border-gray-700 pt-4 text-center text-gray-500 text-sm">
           &copy; {currentYear} The Little Oven Bakery and Farm. All rights reserved.
+          <div className="mt-2 flex justify-center space-x-4">
+            <a href="/privacy-policy" className="hover:text-gray-300 transition-colors">Privacy Policy</a>
+            <a href="/terms-of-service" className="hover:text-gray-300 transition-colors">Terms of Service</a>
+          </div>
         </div>
       </div>
     </footer>
