@@ -23,6 +23,7 @@ const products = [
     price: '$6.00 each',
     deals: ['2 for $10.00'],
     image: '/images/crunchy-round-loaf.jpg',
+    imagePosition: 'top',
   },
   {
     id: 3,
@@ -123,6 +124,9 @@ export default function Products({ openOrderForm }: ProductsProps) {
                   src={product.image}
                   alt={product.name}
                   className="w-full h-full object-cover"
+                  style={{ 
+                    objectPosition: product.imagePosition === 'top' ? 'center top' : 'center center' 
+                  }}
                 />
               </div>
               <div className="p-6">
