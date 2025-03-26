@@ -13,7 +13,7 @@ const products = [
       'Locally raised, free-range eggs from happy hens. Each carton contains 12 eggs with vibrant orange yolks rich in nutrients.',
     price: '$7.00 per carton',
     deals: ['3 cartons for $18.00', '1 flat (30 eggs) for $15.00'],
-    image: '/images/farm-fresh-eggs.jpg',
+    image: '/images/farm-fresh-eggs.png',
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ const products = [
       'Rustic artisanal bread with a crunchy crust and soft interior. Made with simple ingredients and slow-fermented for perfect flavor.',
     price: '$6.00 each',
     deals: ['2 for $10.00'],
-    image: '/images/crunchy-round-loaf.jpg',
+    image: '/images/crunchy-round-loaf.png',
     imagePosition: 'top',
   },
   {
@@ -32,7 +32,7 @@ const products = [
       'Soft, sliced bread perfect for sandwiches and toast. Made with unbleached flour and no preservatives or artificial ingredients.',
     price: '$7.00 each',
     deals: ['2 for $12.00'],
-    image: '/images/sandwich-bread.jpg',
+    image: '/images/sandwich-bread.png',
   },
   {
     id: 4,
@@ -41,7 +41,7 @@ const products = [
       'Traditional French baguette with a crispy exterior and light, airy interior. Perfect for dipping in olive oil or serving with cheese.',
     price: '$7.00 each',
     deals: ['2 for $12.00'],
-    image: '/images/french-bread.jpg',
+    image: '/images/french-bread.png',
   },
   {
     id: 5,
@@ -50,7 +50,7 @@ const products = [
       'Tangy, slow-fermented bread with a chewy crust and airy crumb. Stay tuned for our newest loaf!',
     price: 'Coming Soon',
     deals: [],
-    image: '/images/sourdough.jpg',
+    image: '/images/sourdough.png',
   },
   {
     id: 6,
@@ -59,7 +59,7 @@ const products = [
       'Indulge in our gourmet hamburger buns—pillow‑soft on the inside with a delicately crisp, golden egg wash finish. Perfectly paired with your favorite grilled burger for a sumptuous summer treat.',
     price: '$6.00 for 8 buns',
     deals: ['$10.00 for 16 buns'],
-    image: '/images/hamburger-buns.jpg',
+    image: '/images/hamburger-buns.png',
   },
 ];
 
