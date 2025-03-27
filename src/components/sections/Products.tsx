@@ -61,7 +61,7 @@ const products: Product[] = [
    price: 'Coming Soon',
    deals: [],
    image: '/images/sourdough.jpg',
-   imagePosition: 'center 50%',
+   imagePosition: 'center 70%',
  },
  {
    id: 6,
