@@ -33,7 +33,7 @@ const products: Product[] = [
    price: '$6.00 each',
    deals: ['2 for $10.00'],
    image: '/images/crunchy-round-loaf.png',
-   imagePosition: 'center 25%',  // More specific positioning value
+   imagePosition: 'center 50%',  // More specific positioning value
  },
  {
    id: 3,
@@ -61,6 +61,7 @@ const products: Product[] = [
    price: 'Coming Soon',
    deals: [],
    image: '/images/sourdough.png',
+   imagePosition: 'center 25%',
  },
  {
    id: 6,
