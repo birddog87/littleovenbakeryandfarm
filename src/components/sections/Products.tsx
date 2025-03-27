@@ -51,7 +51,7 @@ const products: Product[] = [
      'Traditional French baguette with a crispy exterior and light, airy interior. Perfect for dipping in olive oil or serving with cheese.',
    price: '$7.00 each',
    deals: ['2 for $12.00'],
-   image: '/images/french-bread.jpg',
+   image: '/images/french-bread1.jpg',
  },
  {
    id: 5,
