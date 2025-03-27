@@ -23,7 +23,7 @@ const products: Product[] = [
      'Locally raised, free-range eggs from happy hens. Each carton contains 12 eggs with vibrant orange yolks rich in nutrients.',
    price: '$7.00 per carton',
    deals: ['3 cartons for $18.00', '1 flat (30 eggs) for $15.00'],
-   image: '/images/farm-fresh-eggs.png',
+   image: '/images/farm-fresh-eggs.jpg',
  },
  {
    id: 2,
@@ -32,8 +32,8 @@ const products: Product[] = [
      'Rustic artisanal bread with a crunchy crust and soft interior. Made with simple ingredients and slow-fermented for perfect flavor.',
    price: '$6.00 each',
    deals: ['2 for $10.00'],
-   image: '/images/crunchy-round-loaf.png',
-   imagePosition: 'center 50%',  // More specific positioning value
+   image: '/images/crunchy-round-loaf.jpg',
+   imagePosition: 'center 70%',  // More specific positioning value
  },
  {
    id: 3,
@@ -51,7 +51,7 @@ const products: Product[] = [
      'Traditional French baguette with a crispy exterior and light, airy interior. Perfect for dipping in olive oil or serving with cheese.',
    price: '$7.00 each',
    deals: ['2 for $12.00'],
-   image: '/images/french-bread.png',
+   image: '/images/french-bread.jpg',
  },
  {
    id: 5,
@@ -60,8 +60,8 @@ const products: Product[] = [
      'Tangy, slow-fermented bread with a chewy crust and airy crumb. Stay tuned for our newest loaf!',
    price: 'Coming Soon',
    deals: [],
-   image: '/images/sourdough.png',
-   imagePosition: 'center 25%',
+   image: '/images/sourdough.jpg',
+   imagePosition: 'center 50%',
  },
  {
    id: 6,
@@ -70,7 +70,7 @@ const products: Product[] = [
      'Indulge in our gourmet hamburger buns—pillow‑soft on the inside with a delicately crisp, golden egg wash finish. Perfectly paired with your favorite grilled burger for a sumptuous summer treat.',
    price: '$6.00 for 8 buns',
    deals: ['$10.00 for 16 buns'],
-   image: '/images/hamburger-buns.png',
+   image: '/images/hamburger-buns.jpg',
  },
 ];
 
