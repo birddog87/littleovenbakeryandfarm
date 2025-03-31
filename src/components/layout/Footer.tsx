@@ -1,3 +1,4 @@
+// Updated Footer.tsx with "Crafted by" section
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -50,10 +51,48 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 border-t border-gray-700 pt-4 text-center text-gray-500 text-sm">
-          &copy; {currentYear} The Little Oven Bakery and Farm. All rights reserved.
-          <div className="mt-2 flex justify-center space-x-4">
-            <a href="/privacy-policy" className="hover:text-gray-300 transition-colors">Privacy Policy</a>
-            <a href="/terms-of-service" className="hover:text-gray-300 transition-colors">Terms of Service</a>
+          <div className="flex flex-col items-center justify-center space-y-3">
+            <div>
+              &copy; {currentYear} The Little Oven Bakery and Farm. All rights reserved.
+            </div>
+            
+            <div className="flex space-x-3">
+              <a href="/privacy-policy" className="hover:text-gray-300 transition-colors">Privacy Policy</a>
+              <span>|</span>
+              <a href="/terms-of-service" className="hover:text-gray-300 transition-colors">Terms of Service</a>
+            </div>
+            
+            {/* Crafted by section */}
+            <a 
+              href="https://HAMMND.com" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center px-4 py-2 mt-4 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-sm transition-all duration-300"
+            >
+              <span className="text-gray-400 mr-2">Crafted by</span>
+              <div className="flex items-center">
+                <span className="font-bold bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent animate-gradientFlow">
+                  HAMMND
+                </span>
+                <div className="ml-1.5 text-primary-400 animate-pulse">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3L13.4101 8.82329H19.5H13.4101L12 3Z" fill="currentColor"/>
+                    <path d="M12 3L10.5899 8.82329H4.5H10.5899L12 3Z" fill="currentColor"/>
+                    <path d="M12 21L13.4101 15.1767H19.5H13.4101L12 21Z" fill="currentColor"/>
+                    <path d="M12 21L10.5899 15.1767H4.5H10.5899L12 21Z" fill="currentColor"/>
+                    <path d="M19.5 12L13.6767 13.4101V19.5V13.4101L19.5 12Z" fill="currentColor"/>
+                    <path d="M19.5 12L13.6767 10.5899V4.5V10.5899L19.5 12Z" fill="currentColor"/>
+                    <path d="M4.5 12L10.3233 13.4101V19.5V13.4101L4.5 12Z" fill="currentColor"/>
+                    <path d="M4.5 12L10.3233 10.5899V4.5V10.5899L4.5 12Z" fill="currentColor"/>
+                  </svg>
+                </div>
+                <div className="ml-1 text-sm opacity-70 group-hover:opacity-100 transition-opacity">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </div>
+              </div>
+            </a>
           </div>
         </div>
       </div>

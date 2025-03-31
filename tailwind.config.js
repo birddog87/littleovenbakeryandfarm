@@ -31,6 +31,7 @@ module.exports = {
         fadeInDown: 'fadeInDown 0.8s ease-out forwards',
         fadeInUp: 'fadeInUp 0.8s ease-out forwards',
         bounce: 'bounce 1.5s infinite',
+        gradientFlow: 'gradientFlow 5s ease infinite',
       },
       keyframes: {
         fadeIn: {
@@ -44,6 +45,10 @@ module.exports = {
         fadeInUp: {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        gradientFlow: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
         },
       },
       textShadow: {
