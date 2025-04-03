@@ -85,7 +85,9 @@ export default function Home() {
   <meta name="twitter:image" content="https://www.littleovenfarm.com/images/og-the-little-oven-bakery.png" />
 
   {/* ✅ Optional: Facebook app ID */}
-  <!-- <meta property="fb:app_id" content="your_facebook_app_id_here" /> -->
+  {/*
+  <meta property="fb:app_id" content="your_facebook_app_id_here" />
+*/}
 
   {/* ✅ Favicon & Manifest */}
   <link rel="icon" href="/favicon.ico" />
