@@ -59,54 +59,49 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs | Hagersville, Ontario</title>
-        <meta
-          name="description"
-          content="The Little Oven Bakery and Farm offers artisanal bread and farm fresh eggs in Hagersville, Ontario. Order our crusty round loaves, sandwich bread, french bread, and farm-fresh eggs for pickup or local delivery."
-        />
-        <meta
-          name="keywords"
-          content="artisanal bakery, homemade bread, farm fresh eggs, Hagersville, Ontario, Little Oven Bakery and Farm, local bakery, crusty bread, sandwich bread, french bread"
-        />
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://littleovenfarm.com/" />
-        <meta property="og:title" content="The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs" />
-        <meta
-          property="og:description"
-          content="Handcrafted bread and farm-fresh eggs from our family to yours. Made with love in Hagersville, Ontario."
-        />
-        <meta property="og:image" content="https://littleovenfarm.com/images/og-image.jpg" />
-        <meta property="og:image:width" content="1024" />
-        <meta property="og:image:height" content="1024" />
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://littleovenfarm.com/" />
-        <meta property="twitter:title" content="The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs" />
-        <meta
-          property="twitter:description"
-          content="Handcrafted bread and farm-fresh eggs from our family to yours. Made with love in Hagersville, Ontario."
-        />
-        <meta property="twitter:image" content="https://littleovenfarm.com/images/twitter-card.jpg" />
-        {/* Canonical URL */}
-        <link rel="canonical" href="https://littleovenfarm.com" />
-        {/* Favicon */}
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="manifest" href="/site.webmanifest" />
-        {/* Fonts */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
-        {/* Structured data for SEO */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-      </Head>
+  {/* ✅ Primary Meta Tags */}
+  <title>The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs | Hagersville, Ontario</title>
+  <meta name="description" content="Handcrafted artisanal bread and farm-fresh eggs made with love in Hagersville, Ontario. Order crusty loaves, sandwich bread, and more for pickup or local delivery." />
+  <link rel="canonical" href="https://www.littleovenfarm.com/" />
+
+  {/* ✅ Open Graph / Facebook / WhatsApp / LinkedIn */}
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.littleovenfarm.com/" />
+  <meta property="og:title" content="The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs" />
+  <meta property="og:description" content="Handcrafted artisanal bread and farm-fresh eggs made with love in Hagersville, Ontario. Local pickup and delivery available." />
+  <meta property="og:image" content="https://www.littleovenfarm.com/images/og-the-little-oven-bakery.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Crusty artisanal bread with The Little Oven Bakery and Farm branding" />
+  <meta property="og:locale" content="en_CA" />
+  <meta property="og:site_name" content="The Little Oven Bakery and Farm" />
+
+  {/* ✅ Twitter / X */}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@littleovenfarm" />
+  <meta name="twitter:url" content="https://www.littleovenfarm.com/" />
+  <meta name="twitter:title" content="The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs" />
+  <meta name="twitter:description" content="Handcrafted bread and farm-fresh eggs from our family to yours in Hagersville, Ontario." />
+  <meta name="twitter:image" content="https://www.littleovenfarm.com/images/og-the-little-oven-bakery.png" />
+
+  {/* ✅ Optional: Facebook app ID */}
+  <!-- <meta property="fb:app_id" content="your_facebook_app_id_here" /> -->
+
+  {/* ✅ Favicon & Manifest */}
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  {/* ✅ Fonts */}
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+</Head>
+
+
 
       {loading ? (
         <div className="fixed inset-0 bg-primary-600 flex items-center justify-center z-50">
