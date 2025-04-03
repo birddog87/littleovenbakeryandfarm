@@ -69,7 +69,7 @@ export default function Home() {
   <meta property="og:url" content="https://www.littleovenfarm.com/" />
   <meta property="og:title" content="The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs" />
   <meta property="og:description" content="Handcrafted artisanal bread and farm-fresh eggs made with love in Hagersville, Ontario. Local pickup and delivery available." />
-  <meta property="og:image" content="https://www.littleovenfarm.com/images/og-the-little-oven-bakery.png" />
+  <meta property="og:image" content="https://www.littleovenfarm.com/images/og-facebook-the-little-oven.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="Crusty artisanal bread with The Little Oven Bakery and Farm branding" />
@@ -82,7 +82,7 @@ export default function Home() {
   <meta name="twitter:url" content="https://www.littleovenfarm.com/" />
   <meta name="twitter:title" content="The Little Oven Bakery and Farm - Artisanal Bread & Farm Fresh Eggs" />
   <meta name="twitter:description" content="Handcrafted bread and farm-fresh eggs from our family to yours in Hagersville, Ontario." />
-  <meta name="twitter:image" content="https://www.littleovenfarm.com/images/og-the-little-oven-bakery.png" />
+  <meta property="og:image" content="https://www.littleovenfarm.com/images/og-facebook-the-little-oven.png" />
 
   {/* ✅ Optional: Facebook app ID */}
   {/*
