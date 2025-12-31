@@ -71,7 +71,7 @@ export default function About() {
                   <div>
                     <p className="font-bold text-gray-800 mb-2">Address:</p>
                     <p className="text-gray-700">
-                      Haversville, Ontario N0E 1H0<br />
+                      Hagersville, Ontario N0E 1H0<br />
                       Canada
                     </p>
                   </div>
