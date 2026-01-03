@@ -109,13 +109,14 @@ export default function Products({ openOrderForm }: ProductsProps) {
  }, []);
 
  return (
-   <section id="products" ref={sectionRef} className="py-20 bg-amber-50 opacity-0">
+   <section id="products" ref={sectionRef} className="py-20 bg-warm-cream bg-linen-texture relative opacity-0">
      <div className="container mx-auto px-4">
        <div className="text-center mb-16">
          <h2 className="text-4xl font-bold text-gray-900 mb-4 font-serif">
            Our Fresh Products
          </h2>
-         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+         <div className="divider-wheat w-24 mx-auto mb-6"></div>
+         <p className="text-xl text-gray-700 max-w-2xl mx-auto">
            All our products are made fresh using quality ingredients. Pre-order for pickup or local delivery.
          </p>
        </div>
@@ -127,7 +128,7 @@ export default function Products({ openOrderForm }: ProductsProps) {
              ref={(el) => {
                productRefs.current[index] = el;
              }}
-             className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 opacity-0"
+             className="bg-white rounded-lg overflow-hidden shadow-rustic hover:shadow-rustic-lg transition-all duration-300 transform hover:scale-105 opacity-0 border border-primary-100/50"
              style={{ animationDelay: `${index * 150}ms` }}
            >
              <div className="h-48 bg-primary-50 overflow-hidden">

@@ -29,12 +29,12 @@ export default function About() {
   }, []);
 
   return (
-    <section id="about" ref={sectionRef} className="py-20 bg-primary-50 opacity-0">
+    <section id="about" ref={sectionRef} className="py-20 bg-warm-wheat bg-paper-grain relative opacity-0">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4 font-serif">Our Story</h2>
-            <div className="w-24 h-1 bg-primary-600 mx-auto"></div>
+            <div className="divider-wheat w-24 mx-auto"></div>
           </div>
           
           <div ref={contentRef} className="prose prose-lg mx-auto opacity-0">
@@ -63,8 +63,9 @@ export default function About() {
               </div>
             </div>
             
-            <div ref={contactRef} className="bg-white p-8 rounded-lg shadow-md border border-primary-100 mt-12 relative overflow-hidden opacity-0">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-100 rounded-full transform translate-x-16 -translate-y-16"></div>
+            <div ref={contactRef} className="bg-white/90 backdrop-blur-sm p-8 rounded-lg shadow-rustic-lg border-2 border-primary-200/60 mt-12 relative overflow-hidden opacity-0">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-100/50 rounded-full transform translate-x-16 -translate-y-16"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary-100/30 rounded-full transform -translate-x-12 translate-y-12"></div>
               <div className="relative">
                 <h3 className="text-2xl font-bold text-primary-700 mb-6">Visit Us</h3>
                 <div className="flex flex-col md:flex-row gap-12">

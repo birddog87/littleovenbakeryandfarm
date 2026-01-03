@@ -42,11 +42,12 @@ export default function Newsletter() {
   };
 
   return (
-    <section className="py-12 bg-primary-100">
+    <section className="py-12 bg-aged-parchment bg-paper-grain relative">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-4 font-serif">Stay Updated</h2>
-          <p className="text-xl text-gray-700 mb-8">
+          <div className="divider-wheat w-24 mx-auto mb-6"></div>
+          <p className="text-xl text-gray-800 mb-8">
             Subscribe to our newsletter for updates on new products, special offers, and seasonal treats.
           </p>
           
@@ -58,7 +59,7 @@ export default function Newsletter() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email address"
-                  className="w-full border border-gray-300 rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full bg-white/80 border-2 border-primary-300/50 rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:bg-white shadow-rustic"
                   disabled={status === 'loading' || status === 'success'}
                 />
                 {status === 'loading' && (

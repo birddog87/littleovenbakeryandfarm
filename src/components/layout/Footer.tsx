@@ -3,7 +3,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-white py-12">
+    <footer className="bg-warm-charcoal bg-wood-texture text-white py-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div>
@@ -30,22 +30,22 @@ export default function Footer() {
 
           <div>
             <h3 className="text-xl font-bold mb-4 text-primary-100">Hours</h3>
-            <div className="flex justify-between border-b border-gray-700 pb-2 mb-2">
+            <div className="flex justify-between border-b border-primary-900/30 pb-2 mb-2">
               <span className="text-gray-400">Monday - Friday</span>
-              <span className="text-white">Order Online Only</span>
+              <span className="text-primary-100">Order Online Only</span>
             </div>
-            <div className="flex justify-between border-b border-gray-700 pb-2 mb-2">
+            <div className="flex justify-between border-b border-primary-900/30 pb-2 mb-2">
               <span className="text-gray-400">Saturday</span>
-              <span className="text-white">9AM - 5PM</span>
+              <span className="text-primary-100">9AM - 5PM</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Sunday</span>
-              <span className="text-white">9AM - 5PM</span>
+              <span className="text-primary-100">9AM - 5PM</span>
             </div>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-gray-700 pt-4 text-center text-gray-500 text-sm">
+        <div className="mt-12 border-t border-primary-900/30 pt-4 text-center text-gray-400 text-sm">
           <div className="flex flex-col items-center justify-center space-y-3">
             <div>
               &copy; {currentYear} The Little Oven Bakery and Farm. All rights reserved.

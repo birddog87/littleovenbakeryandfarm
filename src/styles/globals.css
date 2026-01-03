@@ -23,12 +23,72 @@ a {
   .btn-primary {
     @apply bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-md transition-colors duration-200;
   }
-  
+
   .container-fluid {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-  
+
   .section-padding {
     @apply py-12 md:py-16 lg:py-24;
+  }
+}
+
+/* Rustic Farmhouse Textures */
+@layer utilities {
+  /* Wood grain texture overlay */
+  .bg-wood-texture {
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-blend-mode: overlay;
+  }
+
+  /* Linen/canvas texture */
+  .bg-linen-texture {
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23d4a574' fill-opacity='0.08' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+  }
+
+  /* Paper/parchment grain */
+  .bg-paper-grain {
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='0.08'/%3E%3C/svg%3E");
+  }
+
+  /* Warm gradients */
+  .bg-warm-cream {
+    background: linear-gradient(180deg, #faf6f0 0%, #f5ebe0 50%, #ede4d8 100%);
+  }
+
+  .bg-warm-wheat {
+    background: linear-gradient(180deg, #f5ebe0 0%, #e8dcc8 50%, #ddd0ba 100%);
+  }
+
+  .bg-aged-parchment {
+    background: linear-gradient(180deg, #e8dcc8 0%, #d4c4a8 50%, #c9b896 100%);
+  }
+
+  .bg-warm-charcoal {
+    background: linear-gradient(180deg, #2d2520 0%, #1f1a17 100%);
+  }
+
+  /* Rustic card shadow */
+  .shadow-rustic {
+    box-shadow:
+      0 4px 6px -1px rgba(139, 90, 43, 0.1),
+      0 2px 4px -1px rgba(139, 90, 43, 0.06),
+      0 0 0 1px rgba(139, 90, 43, 0.05);
+  }
+
+  .shadow-rustic-lg {
+    box-shadow:
+      0 10px 15px -3px rgba(139, 90, 43, 0.15),
+      0 4px 6px -2px rgba(139, 90, 43, 0.1),
+      0 0 0 1px rgba(139, 90, 43, 0.08);
+  }
+
+  /* Decorative divider */
+  .divider-wheat {
+    background: linear-gradient(90deg, transparent, #c9a86c 20%, #b8944d 50%, #c9a86c 80%, transparent);
+    height: 2px;
   }
 }
