@@ -112,11 +112,11 @@ export default function Products({ openOrderForm }: ProductsProps) {
    <section id="products" ref={sectionRef} className="py-20 bg-warm-cream bg-linen-texture relative opacity-0">
      <div className="container mx-auto px-4">
        <div className="text-center mb-16">
-         <h2 className="text-4xl font-bold text-gray-900 mb-4 font-serif">
+         <h2 className="text-4xl md:text-5xl font-bold text-amber-900 mb-4 font-serif">
            Our Fresh Products
          </h2>
-         <div className="divider-wheat w-24 mx-auto mb-6"></div>
-         <p className="text-xl text-gray-700 max-w-2xl mx-auto">
+         <div className="divider-wheat w-32 mx-auto mb-6"></div>
+         <p className="text-xl text-amber-800/90 max-w-2xl mx-auto">
            All our products are made fresh using quality ingredients. Pre-order for pickup or local delivery.
          </p>
        </div>
@@ -128,10 +128,10 @@ export default function Products({ openOrderForm }: ProductsProps) {
              ref={(el) => {
                productRefs.current[index] = el;
              }}
-             className="bg-white rounded-lg overflow-hidden shadow-rustic hover:shadow-rustic-lg transition-all duration-300 transform hover:scale-105 opacity-0 border border-primary-100/50"
+             className="bg-gradient-to-b from-amber-50/80 to-orange-50/60 rounded-xl overflow-hidden shadow-rustic-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 opacity-0 border-2 border-amber-200/60 ring-1 ring-amber-900/5"
              style={{ animationDelay: `${index * 150}ms` }}
            >
-             <div className="h-48 bg-primary-50 overflow-hidden">
+             <div className="h-48 bg-gradient-to-br from-amber-100/50 to-orange-100/30 overflow-hidden">
              <img
                src={product.image}
                alt={product.name}
@@ -142,16 +142,16 @@ export default function Products({ openOrderForm }: ProductsProps) {
              />
              </div>
              <div className="p-6">
-               <h3 className="text-xl font-bold text-gray-900 mb-2">
+               <h3 className="text-xl font-bold text-amber-900 mb-2">
                  {product.name}
                </h3>
-               <p className="text-gray-600 mb-4 min-h-[80px]">
+               <p className="text-amber-800/80 mb-4 min-h-[80px]">
                  {product.description}
                </p>
-               <div className="border-t pt-4">
-                 <p className="text-primary-600 font-bold">{product.price}</p>
+               <div className="border-t-2 border-amber-200/60 pt-4">
+                 <p className="text-primary-700 font-bold text-lg">{product.price}</p>
                  {product.deals.map((deal, i) => (
-                   <p key={i} className="text-green-600 text-sm font-medium">
+                   <p key={i} className="text-green-700 text-sm font-semibold">
                      {deal}
                    </p>
                  ))}
