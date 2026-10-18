@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { initialItems, OrderItem, calculateSubtotal } from '../utils/orderUtils';
+import { trackConversion } from '../lib/gtag';
 
 const validateEmail = (email: string): boolean => {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -183,6 +184,12 @@ export default function OrderForm({ open, setOpen }: OrderFormProps) {
       }
       const data = await response.json();
       console.log('Order response:', data);
+      trackConversion('generate_lead', {
+        form_name: 'order',
+        delivery_option: deliveryOption,
+        value: subtotal,
+        currency: 'CAD',
+      });
       setOrderSuccess(true);
       setIsSubmitting(false);
     } catch (error) {

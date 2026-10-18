@@ -1,5 +1,6 @@
 // src/components/Newsletter.tsx
 import { useState } from 'react';
+import { trackConversion } from '../lib/gtag';
 
 export default function Newsletter() {
   const [email, setEmail] = useState('');
@@ -27,6 +28,7 @@ export default function Newsletter() {
       const data = await response.json();
       
       if (response.ok) {
+        trackConversion('sign_up', { method: 'newsletter' });
         setEmail('');
         setMessage(data.message);
         setStatus('success');

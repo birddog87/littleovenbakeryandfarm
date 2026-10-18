@@ -23,3 +23,12 @@ export const event = ({ action, category, label, value }: EventProps): void => {
     value: value,
   });
 };
+
+// GA4 conversion events. Safe when gtag is missing (ad blockers, tests).
+export const trackConversion = (
+  name: string,
+  params: { [key: string]: string | number } = {}
+): void => {
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+  window.gtag('event', name, { ...params, transport_type: 'beacon' });
+};
